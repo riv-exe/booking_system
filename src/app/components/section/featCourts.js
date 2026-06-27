@@ -8,10 +8,10 @@ export default function FeatCourts() {
 
     useEffect(() => {
         async function loadUsers() {
-        const res = await fetch(`/api/courts`);
-        const data = await res.json();
-        console.log(data);
-        setCourts(data.courts);
+            const res = await fetch(`/api/courts`);
+            const data = await res.json();
+            console.log(data);
+            setCourts(data.courts || []);
         }
 
         loadUsers();

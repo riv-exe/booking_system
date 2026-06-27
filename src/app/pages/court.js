@@ -22,7 +22,7 @@ export default function Court({ id }) {
         "14:00",
         "15:00",
         "16:00",
-        "17:00"
+        "17:00",
     ];
     const [bookedHours, setBookedHours] = useState([]);
 
@@ -58,15 +58,16 @@ export default function Court({ id }) {
     }
 
     async function bookingSubmit() {
+        const formatTime = (t) => `${t}:00`;
         const res = await fetch("/api/book", {
             method: "POST",
             headers: {"Content-Type" : "application/json"},
             body: JSON.stringify({
                 user_id: 1,
-                court_id: 2,
+                court_id: id,
                 booking_date: bookingDate,
-                start_time: startTime,
-                end_time: endTime,
+                start_time: formatTime(startTime),
+                end_time: formatTime(endTime),
             })
         })
 
@@ -84,6 +85,15 @@ export default function Court({ id }) {
         day: "numeric",
         year: "numeric",
     });
+
+    function formatTimeLabel(time24) {
+        const [hour] = time24.split(":").map(Number);
+
+        const period = hour >= 12 ? "PM" : "AM";
+        const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+
+        return `${hour12} ${period}`;
+    }
 
     return (
         <div className="px-5 py-10">
@@ -147,19 +157,32 @@ export default function Court({ id }) {
                         <div className="flex gap-5">
                             <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full cursor-pointer">
                                 <label>Start Time</label>
-                                <input 
-                                    type="time" 
+                                <select
                                     value={startTime}
                                     onChange={(e) => setStartTime(e.target.value)}
-                                />
+                                    className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full"
+                                    >
+                                    {hours.map((h) => (
+                                        <option key={h} value={h}>
+                                            {formatTimeLabel(h)}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full cursor-pointer">
                                 <label>End Time</label>
-                                <input
-                                    type="time" 
+                                <select
                                     value={endTime}
                                     onChange={(e) => setEndTime(e.target.value)}
-                                />
+                                    className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full"
+                                    >
+                                    {hours.map((h) => (
+                                        <option key={h} value={h}>
+                                            {formatTimeLabel(h)}
+                                        </option>
+                                    ))}
+                                    <option value="18:00">{formatTimeLabel("18:00")}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
