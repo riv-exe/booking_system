@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Navbar from "./components/layout/navbar";
-import HomeFeatCards from "./components/cards/homeFeatCards";
+import FeatCourts from "./components/section/featCourts";
 import Footer from "./components/layout/footer";
-import BookingModal from "./components/modals/book";
 
 export default function Home() {
   return (
@@ -23,23 +22,13 @@ export default function Home() {
         </svg>
       
         <div className="flex flex-col gap-5">
-          <p className="text-6xl font-extrabold leading-17">Your next game is just a booking away. <span className="text-[var(--primary)]">Book</span> now.</p>
+          <p className="text-6xl font-extrabold leading-17">Your next game is just a booking away. <span className="text-(--primary)">Book</span> now.</p>
           <p className="text-xl">Find a court, book a slot, and start playing.</p>
         </div>
         <Image className="rounded-3xl justify-self-end hidden md:block" src="/displays/badminton-1.jpg" alt="badminton-picture" width={500} height={500}/>
       </div>
 
-      <div className="bg-[var(--secondary)] py-10 flex flex-col items-center">
-        <p className="text-4xl font-bold">No more waiting — just find a court and start playing.</p>
-        <div className="my-15 flex gap-10 ">
-          <HomeFeatCards id={1} title="Badminton Court 1" img="/courts/badminton-court-1.jpg" description="Badminton Court 1" price={350}/>
-          <HomeFeatCards id={2} title="Badminton Court 2" img="/courts/badminton-court-2.jpg" description="Badminton Court 2" price={500}/>
-          <HomeFeatCards id={3} title="Badminton Court 3" img="/courts/badminton-court-3.jpg" description="Badminton Court 3" price={400}/>
-          <HomeFeatCards id={4} title="Badminton Court 4" img="/courts/badminton-court-4.jpg" description="Badminton Court 4" price={250}/>
-        </div>
-      </div>
-
-      {/* <BookingModal/> */}
+      <FeatCourts/>
 
       <Footer/>
     </div>
