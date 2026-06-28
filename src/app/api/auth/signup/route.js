@@ -1,47 +1,54 @@
 import { query } from "@/app/lib/db";
-import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { SignJWT } from "jose";
+import { cookies } from "next/headers";
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function POST(req) {
-    const {name, email, password} = await req.json();
+  try {
+    const { name, email, password, contactNum } = await req.json();
 
-    try {
-        if (!name || !email || !password) {
-            return NextResponse.json(
-                {error: "Missing some of the required fields."},
-                {status: 400}
-            );
-        }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        const existingUser = await query(
-            'SELECT * FROM users WHERE email = $1',
-            [email]    
-        );
+    const result = await query(
+      `INSERT INTO users (name, email, password, contact_num)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, email`,
+      [name, email, hashedPassword, contactNum]
+    );
 
-        if (existingUser.rowCount > 0) {
-            return NextResponse.json(
-                {error: "Email is already registered."},
-                {status: 409}
-            );
-        }
+    const user = result.rows[0];
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+    const token = await new SignJWT({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("7d")
+      .sign(secret);
 
-        const user = await query(
-            `
-                INSERT INTO users (name, email, password)
-                VALUES ($1, $2, $3)
-                RETURNING id, name, email, role
-            `, [name, email, hashedPassword]
-        );
+    const cookieStore = await cookies();
 
-        return NextResponse.json(user.rows[0]);
-    } catch (error) {
-        console.error(error);
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
 
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        );
-    }
+    return Response.json({
+      message: "Signup successful",
+      user,
+    });
+
+  } catch (err) {
+    return Response.json(
+      { message: "Signup failed", error: err.message },
+      { status: 500 }
+    );
+  }
 }

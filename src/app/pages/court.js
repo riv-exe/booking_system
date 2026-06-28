@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import DateButtons from "../components/ui/dateButtons"
+import BookingDetails from "../components/modals/bookingDetails";
 
 export default function Court({ id }) {
+    const [user, setUser] = useState(null);
     const [court, setCourt] = useState(null);
     const [bookingDate, setBookingDate] = useState(() => {
         return new Date().toISOString().split("T")[0];
     });
-    const [startTime, setStartTime] = useState("");
-    const [endTime, setEndTime] = useState("");
+    const [startTime, setStartTime] = useState("06:00");
+    const [endTime, setEndTime] = useState("07:00");
     const hours = [
         "06:00",
         "07:00",
@@ -26,10 +28,12 @@ export default function Court({ id }) {
     ];
     const [bookedHours, setBookedHours] = useState([]);
 
+    const [bookingDetailsIsActive, setBookingDetailsIsActive] = useState(false);
+
     async function getBookedSlots() {
         const res = await fetch(`/api/book?court_id=${id}&date=${bookingDate}`);
         const data = await res.json();
-        setBookedHours(data.bookedHours);
+        setBookedHours(data.bookedHours || []);
         console.log(data);
     }
     
@@ -53,24 +57,38 @@ export default function Court({ id }) {
         refreshBookedSlots();
     }, [bookingDate]);
 
+    useEffect(() => {
+        async function getUser() {
+            const res = await fetch("/api/auth/me");
+            const data = await res.json();
+            setUser(data.user);
+        }
+        getUser();
+    }, []);
+
     function isBooked(hour) {
         return bookedHours.includes(hour);
     }
 
     async function bookingSubmit() {
-        const formatTime = (t) => `${t}:00`;
-        const res = await fetch("/api/book", {
-            method: "POST",
-            headers: {"Content-Type" : "application/json"},
-            body: JSON.stringify({
-                user_id: 1,
-                court_id: id,
-                booking_date: bookingDate,
-                start_time: formatTime(startTime),
-                end_time: formatTime(endTime),
+        if (user) {
+            const formatTime = (t) => `${t}:00`;
+            const res = await fetch("/api/book", {
+                method: "POST",
+                headers: {"Content-Type" : "application/json"},
+                body: JSON.stringify({
+                    user_id: user.id,
+                    court_id: id,
+                    booking_date: bookingDate,
+                    start_time: formatTime(startTime),
+                    end_time: formatTime(endTime),
+                })
             })
-        })
 
+            alert("Booked Successfuly");
+        } else {
+            setBookingDetailsIsActive(true);
+        }
         getBookedSlots();
     }
 
@@ -188,7 +206,7 @@ export default function Court({ id }) {
                     </div>
                     <div className="bg-(--primary) p-3 rounded-2xl flex justify-center">
                         <button 
-                            onClick={() => {bookingSubmit(); alert("booking success!");}}
+                            onClick={() => bookingSubmit()}
                             className="cursor-pointer"
                         >
                             Book Now
@@ -196,6 +214,7 @@ export default function Court({ id }) {
                     </div>
                 </div>
             </div>
+            {bookingDetailsIsActive && <BookingDetails title={court?.name} price={court?.price} bookingDate={bookingDate} startTime={startTime} endTime={endTime} isActive={setBookingDetailsIsActive} getBookedSlots={getBookedSlots}/>}
         </div>
     )
 }
