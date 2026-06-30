@@ -68,7 +68,7 @@ export default function AdminCourtSchedule() {
                         <option value="all">All Courts</option>
 
                         {courts.map((court) => (
-                            <option key={court.id} value={court.id}>
+                            <option key={court.id} value={court.id} className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
                                 {court.name}
                             </option>
                         ))}
