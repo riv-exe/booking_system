@@ -7,8 +7,6 @@ export async function GET(req) {
       `SELECT * FROM courts LIMIT 4`
     );
 
-    console.log(courts);
-
     return NextResponse.json({ courts: courts.rows });
   } catch (error) {
     console.error(error);

@@ -25,7 +25,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="p-5 h-[75px] bg-[var(--secondary)] flex justify-between items-center">
+    <nav className="p-5 h-[75px] bg-[var(--secondary)] flex justify-between items-center z-50">
       
       <button
         onClick={() => router.push("/")}

@@ -31,7 +31,14 @@ export default function SignInPage() {
         return;
       }
 
-      router.push("/");
+      console.log(data);
+
+      if (data.user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+      
     } catch (err) {
       setError("Something went wrong");
     } finally {

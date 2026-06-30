@@ -24,6 +24,8 @@ export async function POST(req) {
       id: user.id,
       name: user.name,
       email: user.email,
+      contact_num: user.contact_num,
+      role: user.role
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
@@ -41,8 +43,14 @@ export async function POST(req) {
     });
 
     return Response.json({
-      message: "Signup successful",
-      user,
+      message: "Sign Up successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        contact_num: user.contact_num,
+        role: user.role
+      },
     });
 
   } catch (err) {

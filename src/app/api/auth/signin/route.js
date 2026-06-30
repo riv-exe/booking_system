@@ -37,7 +37,8 @@ export async function POST(req) {
       id: user.id,
       name: user.name,
       email: user.email,
-      contact_num: user.contact_num
+      contact_num: user.contact_num,
+      role: user.role
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
@@ -60,7 +61,8 @@ export async function POST(req) {
         id: user.id,
         name: user.name,
         email: user.email,
-        contact_num: user.contact_num
+        contact_num: user.contact_num,
+        role: user.role
       },
     });
 
