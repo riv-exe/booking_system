@@ -146,7 +146,7 @@ export default function Bookings() {
                                     </td>
                                     <td className="p-4">{booking.contact_no}</td>
                                     <td className="p-4 text-center">
-                                        <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                                        <button className="bg-(--primary) duration-300 hover:scale-105 hover:opacity-90 px-4 py-2 rounded-lg">
                                             View
                                         </button>
                                     </td>

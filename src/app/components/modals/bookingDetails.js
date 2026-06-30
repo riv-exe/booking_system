@@ -8,14 +8,13 @@ export default function BookingDetails({
   endTime,
   isActive,
   getBookedSlots,
+  onSuccess
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [contactNum, setContactNum] = useState("");
 
   async function bookingSubmit() {
-    const formatTime = (t) => `${t}:00`;
-
     const res = await fetch("/api/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -25,17 +24,24 @@ export default function BookingDetails({
         contactNum,
         court_id: 2,
         booking_date: bookingDate,
-        start_time: formatTime(startTime),
-        end_time: formatTime(endTime),
+        start_time: `${startTime}:00`,
+        end_time: `${endTime}:00`,
       }),
     });
 
     const result = await res.json();
-    console.log(result);
+
+    if (!res.ok) {
+      alert("Booking failed");
+      return;
+    }
 
     isActive(false);
-    alert("Booking Success");
     getBookedSlots();
+
+    if (onSuccess) {
+      onSuccess(result.booking, result.booker);
+    }
   }
 
   return (
@@ -62,16 +68,16 @@ export default function BookingDetails({
 
         {/* Reminder */}
         <div className="bg-yellow-600/5 text-sm p-3 rounded-xl flex gap-2">
-            <p >
-                Tip: Sign in to avoid re-entering your details every time you book.
-            </p>
+          <p>
+            Tip: Sign in to avoid re-entering your details every time you book.
+          </p>
 
-            <button
-                onClick={() => isActive(false) || window.location.assign("/signin")}
-                className="underline text-(--primary) font-bold hover:text-white text-sm cursor-pointer"
-            >
-                Sign in now →
-            </button>
+          <button
+            onClick={() => isActive(false) || window.location.assign("/signin")}
+            className="underline text-(--primary) font-bold hover:text-white text-sm cursor-pointer"
+          >
+            Sign in now →
+          </button>
         </div>
 
         <div className="grid grid-cols-5 gap-6">
@@ -103,6 +109,7 @@ export default function BookingDetails({
                 className="w-full p-3 rounded-xl bg-black/20 border border-gray-700 focus:outline-none focus:border-[var(--primary)]"
                 onChange={(e) => setContactNum(e.target.value)}
               />
+
             </div>
           </div>
 
@@ -133,12 +140,14 @@ export default function BookingDetails({
             </div>
           </div>
         </div>
+
         <button
-              onClick={bookingSubmit}
-              className="w-full bg-[var(--primary)] hover:opacity-90 transition p-3 rounded-xl font-semibold"
-            >
-              Confirm Booking
-            </button>
+          onClick={bookingSubmit}
+          className="w-full bg-[var(--primary)] hover:opacity-90 transition p-3 rounded-xl font-semibold"
+        >
+          Confirm Booking
+        </button>
+
       </div>
     </div>
   );
