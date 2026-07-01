@@ -105,6 +105,7 @@ export default function Court({ id }) {
         });
 
         const data = await res.json();
+        console.log(data);
 
         setReceiptData(data.booking);
         setReceiptOpen(true);
@@ -230,6 +231,7 @@ export default function Court({ id }) {
             {bookingDetailsIsActive && (
                 <BookingDetails
                     title={court?.name}
+                    courtId={id}
                     price={court?.price}
                     bookingDate={bookingDate}
                     startTime={startTime}

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function BookingDetails({
   title,
+  courtId,
   price,
   bookingDate,
   startTime,
@@ -22,7 +23,7 @@ export default function BookingDetails({
         name,
         email,
         contactNum,
-        court_id: 2,
+        court_id: courtId,
         booking_date: bookingDate,
         start_time: `${startTime}:00`,
         end_time: `${endTime}:00`,
