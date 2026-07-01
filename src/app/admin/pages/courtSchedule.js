@@ -99,7 +99,7 @@ export default function AdminCourtSchedule() {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-2 gap-6">
 
                 {courts
                     .filter((court) =>
@@ -110,7 +110,7 @@ export default function AdminCourtSchedule() {
                     .map((court) => (
                         <div
                             key={court.id}
-                            className="border rounded-2xl p-4 bg-(--secondary)"
+                            className="border border-gray-500 rounded-2xl p-4 bg-(--secondary)"
                         >
 
                             <h2 className="font-bold text-lg mb-3">
