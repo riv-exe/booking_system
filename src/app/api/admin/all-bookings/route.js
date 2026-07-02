@@ -14,7 +14,8 @@ export async function GET() {
                 b.start_time,
                 b.end_time,
                 b.reference_code,
-                b.status
+                b.status,
+                b.payment_proof_url
             FROM bookings b
             JOIN courts c ON c.id = b.court_id
             JOIN bookers bo ON bo.id = b.booker_id

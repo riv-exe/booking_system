@@ -1,9 +1,11 @@
 "use client";
 
+import AdminBookingModal from "@/app/components/modals/adminBookingModal";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Bookings() {
     const [bookings, setBookings] = useState([]);
+    const [selectedBooking, setSelectedBooking] = useState(null);
 
     const [search, setSearch] = useState("");
     const [courtFilter, setCourtFilter] = useState("all");
@@ -21,7 +23,6 @@ export default function Bookings() {
             const res = await fetch("/api/admin/all-bookings");
             const data = await res.json();
             setBookings(data.bookings || []);
-            console.log(data.bookings);
         }
         loadBookings();
     }, []);
@@ -37,13 +38,10 @@ export default function Bookings() {
 
     const filteredBookings = bookings.filter((booking) => {
         const matchesSearch =
-            booking.booker_name
-                .toLowerCase()
-                .includes(search.toLowerCase());
+            booking.booker_name?.toLowerCase().includes(search.toLowerCase());
 
         const matchesCourt =
-            courtFilter === "all" ||
-            booking.court_name === courtFilter;
+            courtFilter === "all" || booking.court_name === courtFilter;
 
         const matchesDate =
             dateFilter === "" ||
@@ -64,39 +62,32 @@ export default function Bookings() {
     }
 
     async function updateStatus(id, status) {
-        try {
-            const res = await fetch(`/api/admin/bookings/${id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ status }),
-            });
+        const res = await fetch(`/api/admin/bookings/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status }),
+        });
 
-            const data = await res.json();
+        const data = await res.json();
 
-            if (!res.ok) {
-                alert(data.error || "Failed to update booking.");
-                return;
-            }
-
-            setBookings((prev) =>
-                prev.map((booking) =>
-                    booking.id === id
-                        ? { ...booking, status }
-                        : booking
-                )
-            );
-        } catch (error) {
-            console.error(error);
-            alert("Something went wrong.");
+        if (!res.ok) {
+            alert(data.error || "Failed");
+            return;
         }
+
+        setBookings((prev) =>
+            prev.map((b) =>
+                b.id === id ? { ...b, status } : b
+            )
+        );
     }
 
     return (
         <div className="p-6">
+
             <h1 className="text-2xl font-bold mb-6">Bookings</h1>
 
+            {/* FILTERS */}
             <div className="flex flex-wrap gap-3 mb-6">
 
                 <input
@@ -113,7 +104,9 @@ export default function Bookings() {
                 >
                     <option value="all">All Courts</option>
                     {courts.map((court) => (
-                        <option key={court} value={court} className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">{court}</option>
+                        <option key={court} value={court}>
+                            {court}
+                        </option>
                     ))}
                 </select>
 
@@ -130,88 +123,82 @@ export default function Bookings() {
                     onChange={(e) => setTimeFilter(e.target.value)}
                 >
                     <option value="all">All Times</option>
-                    {hours.map((hour) => (
-                        <option key={hour} value={hour} className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">{hour}</option>
+                    {hours.map((h) => (
+                        <option key={h} value={h}>{h}</option>
                     ))}
                 </select>
 
                 <button
                     onClick={clearFilters}
-                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-white"
+                    className="bg-red-500 px-4 py-2 rounded-lg text-white"
                 >
-                    Clear Filters
+                    Clear
                 </button>
             </div>
 
+            {/* TABLE */}
             <div className="overflow-x-auto rounded-xl border">
 
                 <table className="w-full">
 
                     <thead className="bg-(--secondary)">
                         <tr>
-                            <th className="text-left p-4">Customer</th>
-                            <th className="text-left p-4">Court</th>
-                            <th className="text-left p-4">Date</th>
-                            <th className="text-left p-4">Time</th>
-                            <th className="text-left p-4">Contact</th>
-                            <th className="text-left p-4">Status</th>
-                            <th className="text-center p-4">Action</th>
+                            <th className="p-4 text-left">Customer</th>
+                            <th className="p-4 text-left">Court</th>
+                            <th className="p-4 text-left">Date</th>
+                            <th className="p-4 text-left">Time</th>
+                            <th className="p-4 text-left">Status</th>
+                            <th className="p-4 text-center">Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
-
                         {filteredBookings.length === 0 ? (
                             <tr>
-                                <td className="text-center p-8" colSpan={6}>
+                                <td colSpan={6} className="p-6 text-center">
                                     No bookings found
                                 </td>
                             </tr>
                         ) : (
-                            filteredBookings.map((booking) => (
-                                <tr key={booking.id} className="border-t">
-                                    <td className="p-4">{booking.booker_name}</td>
-                                    <td className="p-4">{booking.court_name}</td>
-                                    <td className="p-4">{normalizeDate(booking.booking_date)}</td>
-                                    <td className="p-4">
-                                        {booking.start_time.slice(0,5)} - {booking.end_time.slice(0,5)}
-                                    </td>
-                                    <td className="p-4">{booking.contact_no}</td>
-                                    <td className="p-4">{booking.status}</td>
-                                    <td className="p-4 text-center">
-                                        {booking.status === "pending" ? (
-                                            <div className="flex justify-center gap-2 flex-col">
-                                                <button
-                                                    onClick={() => updateStatus(booking.id, "confirmed")}
-                                                    className="bg-(--primary) hover:bg-(--primary)/90 duration-300 hover:scale-105 px-3 py-2 rounded-lg cursor-pointer"
-                                                >
-                                                    Confirm
-                                                </button>
+                            filteredBookings.map((b) => (
+                                <tr key={b.id} className="border-t">
 
-                                                <button
-                                                    onClick={() => updateStatus(booking.id, "rejected")}
-                                                    className="bg-red-600 hover:bg-red-700 px-3 duration-300 hover:scale-105 py-2 rounded-lg cursor-pointer"
-                                                >
-                                                    Reject
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                className="bg-(--primary) duration-300 hover:scale-105 hover:opacity-90 px-4 py-2 rounded-lg cursor-pointer"
-                                            >
-                                                View
-                                            </button>
-                                        )}
+                                    <td className="p-4">{b.booker_name}</td>
+                                    <td className="p-4">{b.court_name}</td>
+                                    <td className="p-4">
+                                        {normalizeDate(b.booking_date)}
                                     </td>
+                                    <td className="p-4">
+                                        {b.start_time.slice(0,5)} - {b.end_time.slice(0,5)}
+                                    </td>
+                                    <td className="p-4 capitalize">{b.status}</td>
+
+                                    <td className="p-4 text-center">
+                                        <button
+                                            onClick={() => setSelectedBooking(b)}
+                                            className="bg-(--primary) px-4 py-2 rounded-lg"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+
                                 </tr>
                             ))
                         )}
-
                     </tbody>
 
                 </table>
 
             </div>
+
+            {/* MODAL */}
+            <AdminBookingModal
+                booking={selectedBooking}
+                onClose={() => setSelectedBooking(null)}
+                onConfirm={(id) => updateStatus(id, "confirmed")}
+                onReject={(id) => updateStatus(id, "rejected")}
+            />
+
         </div>
     );
 }

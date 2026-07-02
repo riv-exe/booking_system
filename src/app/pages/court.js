@@ -57,7 +57,6 @@ export default function Court({ id }) {
         getUser();
     }, []);
 
-    // ✅ OLD LOGIC RESTORED (IMPORTANT)
     function getSlotStatus(hour) {
         const slot = slots.find((s) => s.time === hour);
         return slot ? slot.status : null;
@@ -82,31 +81,38 @@ export default function Court({ id }) {
         return `${hour12} ${period}`;
     }
 
-    async function bookingSubmit() {
-        if (!user) {
-            setBookingDetailsIsActive(true);
-            return;
-        }
+    // async function bookingSubmit() {
+    //     if (!user) {
+    //         setBookingDetailsIsActive(true);
+    //         return;
+    //     }
 
-        const res = await fetch("/api/book", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user_id: user.id,
-                court_id: id,
-                booking_date: bookingDate,
-                start_time: `${startTime}:00`,
-                end_time: `${endTime}:00`
-            })
-        });
+    //     const res = await fetch("/api/book", {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify({
+    //             user_id: user.id,
+    //             court_id: id,
+    //             booking_date: bookingDate,
+    //             start_time: `${startTime}:00`,
+    //             end_time: `${endTime}:00`,
+    //             total_price: totalPrice
+    //         })
+    //     });
 
-        const data = await res.json();
+    //     const data = await res.json();
 
-        setReceiptData(data);
-        setReceiptOpen(true);
+    //     setReceiptData(data);
+    //     setReceiptOpen(true);
 
-        getSlots();
-    }
+    //     getSlots();
+    // }
+
+    const start = parseInt(startTime.slice(0, 2));
+    const end = parseInt(endTime.slice(0, 2));
+
+    const hoursCount = Math.max(0, end - start);
+    const totalPrice = hoursCount * court?.price;
 
     return (
         <div className="px-5 py-10">
@@ -215,7 +221,7 @@ export default function Court({ id }) {
                     </div>
 
                     <div className="bg-(--primary) p-3 rounded-2xl flex justify-center">
-                        <button onClick={bookingSubmit}>
+                        <button onClick={() => setBookingDetailsIsActive(true)}>
                             Book Now
                         </button>
                     </div>
@@ -239,6 +245,11 @@ export default function Court({ id }) {
             {bookingDetailsIsActive && (
                 <BookingDetails
                     isActive={setBookingDetailsIsActive}
+                    userId={user?.id}
+                    userName={user?.name}
+                    userEmail={user?.email}
+                    userContactNum={user?.contact_num}
+                    price={totalPrice}
                     courtId={id}
                     bookingDate={bookingDate}
                     startTime={startTime}
@@ -246,6 +257,7 @@ export default function Court({ id }) {
                     getSlots={getSlots}
                 />
             )}
+
 
         </div>
     );
