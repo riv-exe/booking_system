@@ -12,7 +12,9 @@ export async function GET() {
                 c.name AS court_name,
                 b.booking_date::text AS booking_date,
                 b.start_time,
-                b.end_time
+                b.end_time,
+                b.reference_code,
+                b.status
             FROM bookings b
             JOIN courts c ON c.id = b.court_id
             JOIN bookers bo ON bo.id = b.booker_id

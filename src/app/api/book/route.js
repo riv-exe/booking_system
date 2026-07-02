@@ -148,8 +148,9 @@ export async function GET(req) {
             FROM bookings
             WHERE court_id = $1
             AND booking_date = $2
+            AND status = $3
             `,
-            [court_id, date]
+            [court_id, date, "confirmed"]
         );
 
         const bookedHours = [];

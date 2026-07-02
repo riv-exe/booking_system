@@ -31,7 +31,8 @@ export async function GET(req) {
             FROM bookings b
             JOIN bookers bo ON bo.id = b.booker_id
             WHERE b.booking_date = $1
-        `, [date]);
+            AND b.status = $2
+        `, [date, "confirmed"]);
 
         const bookings = bookingsResult.rows;
 

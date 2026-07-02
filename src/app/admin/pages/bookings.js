@@ -21,6 +21,7 @@ export default function Bookings() {
             const res = await fetch("/api/admin/all-bookings");
             const data = await res.json();
             setBookings(data.bookings || []);
+            console.log(data.bookings);
         }
         loadBookings();
     }, []);
@@ -60,6 +61,36 @@ export default function Bookings() {
         setCourtFilter("all");
         setDateFilter("");
         setTimeFilter("all");
+    }
+
+    async function updateStatus(id, status) {
+        try {
+            const res = await fetch(`/api/admin/bookings/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ status }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || "Failed to update booking.");
+                return;
+            }
+
+            setBookings((prev) =>
+                prev.map((booking) =>
+                    booking.id === id
+                        ? { ...booking, status }
+                        : booking
+                )
+            );
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong.");
+        }
     }
 
     return (
@@ -123,6 +154,7 @@ export default function Bookings() {
                             <th className="text-left p-4">Date</th>
                             <th className="text-left p-4">Time</th>
                             <th className="text-left p-4">Contact</th>
+                            <th className="text-left p-4">Status</th>
                             <th className="text-center p-4">Action</th>
                         </tr>
                     </thead>
@@ -145,10 +177,31 @@ export default function Bookings() {
                                         {booking.start_time.slice(0,5)} - {booking.end_time.slice(0,5)}
                                     </td>
                                     <td className="p-4">{booking.contact_no}</td>
+                                    <td className="p-4">{booking.status}</td>
                                     <td className="p-4 text-center">
-                                        <button className="bg-(--primary) duration-300 hover:scale-105 hover:opacity-90 px-4 py-2 rounded-lg">
-                                            View
-                                        </button>
+                                        {booking.status === "pending" ? (
+                                            <div className="flex justify-center gap-2 flex-col">
+                                                <button
+                                                    onClick={() => updateStatus(booking.id, "confirmed")}
+                                                    className="bg-(--primary) hover:bg-(--primary)/90 duration-300 hover:scale-105 px-3 py-2 rounded-lg cursor-pointer"
+                                                >
+                                                    Confirm
+                                                </button>
+
+                                                <button
+                                                    onClick={() => updateStatus(booking.id, "rejected")}
+                                                    className="bg-red-600 hover:bg-red-700 px-3 duration-300 hover:scale-105 py-2 rounded-lg cursor-pointer"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                className="bg-(--primary) duration-300 hover:scale-105 hover:opacity-90 px-4 py-2 rounded-lg cursor-pointer"
+                                            >
+                                                View
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))
