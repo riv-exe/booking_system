@@ -251,6 +251,7 @@ export default function Court({ id }) {
                     userContactNum={user?.contact_num}
                     price={totalPrice}
                     courtId={id}
+                    court={court}
                     bookingDate={bookingDate}
                     startTime={startTime}
                     endTime={endTime}

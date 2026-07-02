@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import UploadProofModal from "./uploadPicture";
+import BookingReceipt from "./bookingReceipt";
 
 export default function BookingDetails({
   title,
@@ -8,6 +9,7 @@ export default function BookingDetails({
   userEmail,
   userContactNum,
   courtId,
+  court,
   price,
   bookingDate,
   startTime,
@@ -21,6 +23,8 @@ export default function BookingDetails({
   const [contactNum, setContactNum] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [secureUrl, setSecureUrl] = useState(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [receiptData, setReceiptData] = useState(null);
 
   useEffect(() => {
     if (userName) setName(userName);
@@ -149,6 +153,15 @@ export default function BookingDetails({
         setIsOpen={setIsOpen}
         onUpload={setSecureUrl}
       />
+
+      {/* <BookingReceipt
+          isOpen={receiptOpen}
+          setIsOpen={setReceiptOpen}
+          booking={receiptData?.booking}
+          reference={receiptData?.reference}
+          court={court}
+          user={user}
+      /> */}
     </div>
   );
 }
