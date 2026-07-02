@@ -9,7 +9,7 @@ export async function proxy(req) {
 
   if (!token) {
     if (pathname.startsWith("/admin")) {
-      return NextResponse.redirect(new URL("/signin", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     return NextResponse.next();
@@ -23,13 +23,13 @@ export async function proxy(req) {
     }
 
     if (pathname.startsWith("/admin") && payload.role !== "admin") {
-      return NextResponse.redirect(new URL("/signin", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     return NextResponse.next();
   } catch {
     if (pathname.startsWith("/admin")) {
-      return NextResponse.redirect(new URL("/signin", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     return NextResponse.next();

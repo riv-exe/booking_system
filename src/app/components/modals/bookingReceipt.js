@@ -40,7 +40,7 @@ export default function BookingReceipt({
 
                 <div className="bg-background border border-gray-700 rounded-xl p-4 flex flex-col gap-2">
                     <p className="text-sm opacity-60">Reference Number</p>
-                    <p className="text-xl font-bold">{ref}</p>
+                    <p className="text-xl font-bold">{booking?.reference_code}</p>
                 </div>
 
                 <div className="bg-background border border-gray-700 rounded-xl p-4 flex flex-col gap-2">

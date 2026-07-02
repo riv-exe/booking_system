@@ -79,14 +79,14 @@ export default function AdminBookingModal({
           <div className="flex justify-end gap-3">
 
             <button
-              onClick={() => onReject(booking.id)}
+              onClick={() => {onReject(booking.id); onClose(); }}
               className="bg-red-600 px-4 py-2 rounded-lg"
             >
               Reject
             </button>
 
             <button
-              onClick={() => onConfirm(booking.id)}
+              onClick={() => {onConfirm(booking.id); onClose();}}
               className="bg-(--primary) px-4 py-2 rounded-lg"
             >
               Confirm
