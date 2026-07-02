@@ -5,7 +5,8 @@ export default function BookingReceipt({
     setIsOpen,
     booking,
     court,
-    user
+    user,
+    price
 }) {
     if (!isOpen) return null;
 
@@ -45,7 +46,7 @@ export default function BookingReceipt({
                 <div className="bg-background border border-gray-700 rounded-xl p-4 flex flex-col gap-2">
                     <p className="font-semibold">{court?.name}</p>
                     <p className="text-sm opacity-70">
-                        ₱{court?.price} / hour
+                        ₱{price} 
                     </p>
                 </div>
 
@@ -60,7 +61,7 @@ export default function BookingReceipt({
                     <div className="bg-background border border-gray-700 rounded-xl p-3">
                         <p className="text-xs opacity-60">Contact</p>
                         <p className="font-semibold">
-                            {user?.contact_num || "N/A"}
+                            {user.contactNum || "N/A"}
                         </p>
                     </div>
                 </div>
@@ -83,7 +84,7 @@ export default function BookingReceipt({
 
                 <div className="bg-background border border-gray-700 rounded-xl p-3 flex justify-between items-center">
                     <p className="text-sm opacity-70">Status</p>
-                    <p className="text-green-400 font-bold">CONFIRMED</p>
+                    <p className="text-yellow-500 font-bold">PENDING</p>
                 </div>
 
                 <p className="text-xs opacity-50 text-center">

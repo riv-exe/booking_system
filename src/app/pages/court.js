@@ -21,6 +21,7 @@ export default function Court({ id }) {
     const [bookingDetailsIsActive, setBookingDetailsIsActive] = useState(false);
     const [receiptOpen, setReceiptOpen] = useState(false);
     const [receiptData, setReceiptData] = useState(null);
+    const [userData, setUserData] = useState(null);
 
     const hours = [
         "06:00","07:00","08:00","09:00","10:00",
@@ -238,7 +239,8 @@ export default function Court({ id }) {
                 booker={receiptData?.booker}
                 reference={receiptData?.reference}
                 court={court}
-                user={user}
+                user={userData}
+                price={totalPrice}
             />
 
             {/* LOGIN MODAL */}
@@ -256,6 +258,11 @@ export default function Court({ id }) {
                     startTime={startTime}
                     endTime={endTime}
                     getSlots={getSlots}
+
+                    receiptOpen={receiptOpen}
+                    setReceiptOpen={setReceiptOpen}
+                    setReceiptData={setReceiptData}
+                    setUserData={setUserData}
                 />
             )}
 

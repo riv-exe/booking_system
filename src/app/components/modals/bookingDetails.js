@@ -16,15 +16,16 @@ export default function BookingDetails({
   endTime,
   isActive,
   getSlots,
-  onSuccess
+  onSuccess,
+  setReceiptOpen,
+  setReceiptData,
+  setUserData
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [contactNum, setContactNum] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [secureUrl, setSecureUrl] = useState(null);
-  const [receiptOpen, setReceiptOpen] = useState(false);
-  const [receiptData, setReceiptData] = useState(null);
 
   useEffect(() => {
     if (userName) setName(userName);
@@ -64,6 +65,13 @@ export default function BookingDetails({
     }
 
     isActive(false);
+    setUserData({
+      name: name,
+      email: email,
+      contactNum: contactNum
+    });
+    setReceiptData(result);
+    setReceiptOpen(true);
     getSlots();
 
     if (onSuccess) {
@@ -160,7 +168,7 @@ export default function BookingDetails({
           booking={receiptData?.booking}
           reference={receiptData?.reference}
           court={court}
-          user={user}
+          // user={user}
       /> */}
     </div>
   );
