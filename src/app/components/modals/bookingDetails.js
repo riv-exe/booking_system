@@ -20,7 +20,7 @@ export default function BookingDetails({
   const [email, setEmail] = useState("");
   const [contactNum, setContactNum] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [secureUrl, setSecureUrl] = useState("");
+  const [secureUrl, setSecureUrl] = useState(null);
 
   useEffect(() => {
     if (userName) setName(userName);
