@@ -81,6 +81,18 @@ export default function Court({ id }) {
         const hour12 = hour % 12 === 0 ? 12 : hour % 12;
         return `${hour12} ${period}`;
     }
+    useEffect(() => {
+        const startIndex = hours.indexOf(startTime);
+        const endIndex = hours.indexOf(endTime);
+
+        if (endIndex <= startIndex) {
+            setEndTime(hours[startIndex + 1] || startTime);
+        }
+    }, [startTime]);
+
+    const startIndex = hours.indexOf(startTime);
+
+    const validEndHours = hours.slice(startIndex + 1);
 
     // async function bookingSubmit() {
     //     if (!user) {
@@ -210,11 +222,14 @@ export default function Court({ id }) {
                                     onChange={(e) => setEndTime(e.target.value)}
                                     className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full"
                                 >
-                                    {hours.map((h) => (
+                                    {validEndHours.map((h) => (
                                         <option key={h} value={h}>
                                             {formatTimeLabel(h)}
                                         </option>
                                     ))}
+                                    <option value={"18:00"}>
+                                        6 PM
+                                    </option>
                                 </select>
                             </div>
 
