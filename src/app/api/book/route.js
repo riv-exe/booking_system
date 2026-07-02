@@ -128,6 +128,8 @@ export async function POST(req) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
 export async function GET(req) {
     const { searchParams } = new URL(req.url);
 
@@ -144,27 +146,29 @@ export async function GET(req) {
     try {
         const result = await query(
             `
-            SELECT start_time, end_time
+            SELECT start_time, end_time, status
             FROM bookings
             WHERE court_id = $1
             AND booking_date = $2
-            AND status = $3
             `,
-            [court_id, date, "confirmed"]
+            [court_id, date]
         );
 
-        const bookedHours = [];
+        const slots = [];
 
         result.rows.forEach((booking) => {
             const start = parseInt(booking.start_time.slice(0, 2));
             const end = parseInt(booking.end_time.slice(0, 2));
 
             for (let h = start; h < end; h++) {
-                bookedHours.push(`${String(h).padStart(2, "0")}:00`);
+                slots.push({
+                    time: `${String(h).padStart(2, "0")}:00`,
+                    status: booking.status
+                });
             }
         });
 
-        return NextResponse.json({ bookedHours });
+        return NextResponse.json({ slots });
 
     } catch (error) {
         console.error(error);

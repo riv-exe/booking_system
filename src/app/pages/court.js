@@ -9,17 +9,16 @@ export default function Court({ id }) {
     const [user, setUser] = useState(null);
     const [court, setCourt] = useState(null);
 
-    const [bookingDate, setBookingDate] = useState(() => {
-        return new Date().toISOString().split("T")[0];
-    });
+    const [bookingDate, setBookingDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
 
     const [startTime, setStartTime] = useState("06:00");
     const [endTime, setEndTime] = useState("07:00");
 
-    const [bookedHours, setBookedHours] = useState([]);
+    const [slots, setSlots] = useState([]);
 
     const [bookingDetailsIsActive, setBookingDetailsIsActive] = useState(false);
-
     const [receiptOpen, setReceiptOpen] = useState(false);
     const [receiptData, setReceiptData] = useState(null);
 
@@ -29,10 +28,10 @@ export default function Court({ id }) {
         "16:00","17:00"
     ];
 
-    async function getBookedSlots() {
+    async function getSlots() {
         const res = await fetch(`/api/book?court_id=${id}&date=${bookingDate}`);
         const data = await res.json();
-        setBookedHours(data.bookedHours || []);
+        setSlots(data.slots || []);
     }
 
     useEffect(() => {
@@ -40,13 +39,13 @@ export default function Court({ id }) {
             const res = await fetch(`/api/courts/${id}`);
             const data = await res.json();
             setCourt(data.courts[0]);
-            getBookedSlots();
+            getSlots();
         }
         load();
     }, []);
 
     useEffect(() => {
-        getBookedSlots();
+        getSlots();
     }, [bookingDate]);
 
     useEffect(() => {
@@ -58,8 +57,10 @@ export default function Court({ id }) {
         getUser();
     }, []);
 
-    function isBooked(hour) {
-        return bookedHours.includes(hour);
+    // ✅ OLD LOGIC RESTORED (IMPORTANT)
+    function getSlotStatus(hour) {
+        const slot = slots.find((s) => s.time === hour);
+        return slot ? slot.status : null;
     }
 
     function changeDate(days) {
@@ -81,11 +82,6 @@ export default function Court({ id }) {
         return `${hour12} ${period}`;
     }
 
-    function handleSuccess(booking, booker) {
-  setReceiptData({ ...booking, booker });
-  setReceiptOpen(true);
-}
-
     async function bookingSubmit() {
         if (!user) {
             setBookingDetailsIsActive(true);
@@ -100,17 +96,16 @@ export default function Court({ id }) {
                 court_id: id,
                 booking_date: bookingDate,
                 start_time: `${startTime}:00`,
-                end_time: `${endTime}:00`,
-            }),
+                end_time: `${endTime}:00`
+            })
         });
 
         const data = await res.json();
-        console.log(data);
 
-        setReceiptData(data.booking);
+        setReceiptData(data);
         setReceiptOpen(true);
 
-        getBookedSlots();
+        getSlots();
     }
 
     return (
@@ -118,11 +113,13 @@ export default function Court({ id }) {
 
             <div className="flex items-start gap-5">
 
-                {/* LEFT SIDE */}
-                <div className="w-[65vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700 flex flex-col gap-5">
+                {/* LEFT */}
+                <div className="w-[65vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700">
 
                     <div className="flex items-center justify-between">
-                        <p className="text-2xl font-bold">Court Availability</p>
+                        <p className="text-2xl font-bold">
+                            Court Availability
+                        </p>
 
                         <div className="flex gap-2">
                             <div className="bg-(--primary) px-2 py-1 text-xs rounded-full">
@@ -132,34 +129,34 @@ export default function Court({ id }) {
                                 Occupied
                             </div>
                             <div className="bg-yellow-600 px-2 py-1 text-xs rounded-full">
-                                Selected
+                                Pending
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl cursor-pointer">
+                    <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl mt-3">
                         <p>{court?.name}</p>
                     </div>
 
-                    <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl flex justify-between items-center">
+                    <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl flex justify-between items-center mt-3">
                         <button onClick={() => changeDate(-1)}>&lt;</button>
                         <p>{displayDate}</p>
                         <button onClick={() => changeDate(1)}>&gt;</button>
                     </div>
 
-                    <div className="grid grid-cols-4 gap-5">
+                    <div className="grid grid-cols-4 gap-5 mt-4">
                         {hours.map((hour) => (
                             <DateButtons
                                 key={hour}
-                                time={hour}
-                                isBooked={isBooked(hour)}
+                                time={formatTimeLabel(hour)}
+                                status={getSlotStatus(hour)} 
                             />
                         ))}
                     </div>
 
                 </div>
 
-                {/* RIGHT SIDE */}
+                {/* RIGHT */}
                 <div className="w-[35vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700 flex flex-col gap-5">
 
                     <p className="text-2xl font-bold">Book this Court</p>
@@ -227,28 +224,28 @@ export default function Court({ id }) {
 
             </div>
 
-            {/* MODALS */}
-            {bookingDetailsIsActive && (
-                <BookingDetails
-                    title={court?.name}
-                    courtId={id}
-                    price={court?.price}
-                    bookingDate={bookingDate}
-                    startTime={startTime}
-                    endTime={endTime}
-                    isActive={setBookingDetailsIsActive}
-                    getBookedSlots={getBookedSlots}
-                    onSuccess={handleSuccess}
-                />
-            )}
-
+            {/* RECEIPT */}
             <BookingReceipt
                 isOpen={receiptOpen}
                 setIsOpen={setReceiptOpen}
-                booking={receiptData}
+                booking={receiptData?.booking}
+                booker={receiptData?.booker}
+                reference={receiptData?.reference}
                 court={court}
                 user={user}
             />
+
+            {/* LOGIN MODAL */}
+            {bookingDetailsIsActive && (
+                <BookingDetails
+                    isActive={setBookingDetailsIsActive}
+                    courtId={id}
+                    bookingDate={bookingDate}
+                    startTime={startTime}
+                    endTime={endTime}
+                    getSlots={getSlots}
+                />
+            )}
 
         </div>
     );

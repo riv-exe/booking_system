@@ -8,7 +8,7 @@ export default function BookingDetails({
   startTime,
   endTime,
   isActive,
-  getBookedSlots,
+  getSlots,
   onSuccess
 }) {
   const [name, setName] = useState("");
@@ -38,7 +38,7 @@ export default function BookingDetails({
     }
 
     isActive(false);
-    getBookedSlots();
+    getSlots();
 
     if (onSuccess) {
       onSuccess(result.booking, result.booker);

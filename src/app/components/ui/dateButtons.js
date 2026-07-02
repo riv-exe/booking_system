@@ -1,26 +1,18 @@
-export default function DateButtons({ time, isMorning, isBooked }) {
-    function formatTime(time24) {
-        const [hourStr, minute] = time24.split(":");
-        let hour = parseInt(hourStr);
+export default function DateButtons({ time, status }) {
 
-        const ampm = hour >= 12 ? "PM" : "AM";
+    let bg = "bg-(--primary)";
 
-        hour = hour % 12;
-        if (hour === 0) hour = 12;
+    if (status === "pending") {
+        bg = "bg-yellow-500";
+    }
 
-        return `${hour}:${minute} ${ampm}`;
+    if (status === "confirmed") {
+        bg = "bg-red-600";
     }
 
     return (
-        <button
-            disabled={isBooked}
-            className={`p-5 rounded-2xl duration-300 hover:scale-105 ${
-                isBooked
-                    ? "bg-red-700 cursor-not-allowed"
-                    : "bg-[var(--primary)]"
-            }`}
-        >
-            <p>{formatTime(time)}</p>
-        </button>
+        <div className={`${bg} p-4 rounded-xl text-white text-center`}>
+            {time}
+        </div>
     );
 }
