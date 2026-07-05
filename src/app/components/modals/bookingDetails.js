@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import UploadProofModal from "./uploadPicture";
-import BookingReceipt from "./bookingReceipt";
 
 export default function BookingDetails({
   title,
@@ -24,8 +23,11 @@ export default function BookingDetails({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [contactNum, setContactNum] = useState("");
+
   const [isOpen, setIsOpen] = useState(false);
   const [secureUrl, setSecureUrl] = useState(null);
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (userName) setName(userName);
@@ -34,48 +36,61 @@ export default function BookingDetails({
   }, [userName, userEmail, userContactNum]);
 
   async function bookingSubmit() {
+    if (loading) return;
+
     if (!secureUrl) {
       setIsOpen(true);
       return;
     }
 
-    console.log(secureUrl);
+    setLoading(true);
 
-    const res = await fetch("/api/book", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id: userId,
+    try {
+      const res = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          name,
+          email,
+          contactNum,
+          court_id: courtId,
+          booking_date: bookingDate,
+          start_time: `${startTime}:00`,
+          end_time: `${endTime}:00`,
+          payment_proof_url: secureUrl
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        alert(result?.message || "Booking failed");
+        return;
+      }
+
+      isActive(false);
+
+      setUserData({
         name,
         email,
-        contactNum,
-        court_id: courtId,
-        booking_date: bookingDate,
-        start_time: `${startTime}:00`,
-        end_time: `${endTime}:00`,
-        payment_proof_url: secureUrl
-      }),
-    });
+        contactNum
+      });
 
-    const result = await res.json();
+      setReceiptData(result);
+      setReceiptOpen(true);
 
-    if (!res.ok) {
-      alert("Booking failed");
-      return;
-    }
+      getSlots();
 
-    isActive(false);
-    setUserData({
-      name: name,
-      email: email,
-      contactNum: contactNum
-    });
-    setReceiptData(result);
-    setReceiptOpen(true);
-    getSlots();
+      if (onSuccess) {
+        onSuccess(result.booking, result.booker);
+      }
 
-    if (onSuccess) {
-      onSuccess(result.booking, result.booker);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -102,7 +117,6 @@ export default function BookingDetails({
 
         <div className="grid grid-cols-5 gap-6">
 
-          {/* LEFT */}
           <div className="col-span-3 flex flex-col gap-4">
 
             <input
@@ -127,7 +141,6 @@ export default function BookingDetails({
             />
           </div>
 
-          {/* RIGHT */}
           <div className="col-span-2 flex flex-col gap-4">
 
             <div className="p-4 bg-black/20 border border-gray-700 rounded-xl">
@@ -149,9 +162,14 @@ export default function BookingDetails({
 
         <button
           onClick={bookingSubmit}
-          className="w-full bg-[var(--primary)] p-3 rounded-xl font-semibold"
+          disabled={loading}
+          className="w-full bg-[var(--primary)] p-3 rounded-xl font-semibold disabled:opacity-60"
         >
-          {secureUrl ? "Confirm Booking" : "Upload Payment Proof"}
+          {loading
+            ? "Processing Booking..."
+            : secureUrl
+              ? "Confirm Booking"
+              : "Upload Payment Proof"}
         </button>
 
       </div>
@@ -162,14 +180,6 @@ export default function BookingDetails({
         onUpload={setSecureUrl}
       />
 
-      {/* <BookingReceipt
-          isOpen={receiptOpen}
-          setIsOpen={setReceiptOpen}
-          booking={receiptData?.booking}
-          reference={receiptData?.reference}
-          court={court}
-          // user={user}
-      /> */}
     </div>
   );
 }

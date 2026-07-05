@@ -13,7 +13,6 @@ export default function AdminBookingModal({
 
       <div className="bg-[var(--background)] w-full max-w-3xl rounded-2xl border border-gray-700 p-6 flex flex-col gap-5">
 
-        {/* HEADER */}
         <div className="flex justify-between">
           <div>
             <h2 className="text-xl font-bold">Booking Details</h2>
@@ -25,10 +24,8 @@ export default function AdminBookingModal({
           <button onClick={onClose}>✕</button>
         </div>
 
-        {/* BODY */}
         <div className="grid grid-cols-2 gap-5">
 
-          {/* INFO */}
           <div className="flex flex-col gap-3">
 
             <div className="p-3 border rounded-xl">
@@ -54,7 +51,6 @@ export default function AdminBookingModal({
 
           </div>
 
-          {/* PROOF */}
           <div className="flex flex-col gap-3">
 
             <p className="text-sm text-gray-400">Payment Proof</p>
@@ -74,7 +70,6 @@ export default function AdminBookingModal({
 
         </div>
 
-        {/* ACTIONS */}
         {booking.status === "pending" && (
           <div className="flex justify-end gap-3">
 

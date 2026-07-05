@@ -52,7 +52,6 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
 
       <div className="bg-[var(--background)] w-full max-w-3xl h-[500px] rounded-2xl border border-gray-700 flex overflow-hidden">
 
-        {/* LEFT SIDE - PAYMENT INFO */}
         <div className="w-1/2 p-5 border-r border-gray-700 flex flex-col gap-4">
 
           <h2 className="text-xl font-bold">Payment Details</h2>
@@ -80,10 +79,8 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
 
         </div>
 
-        {/* RIGHT SIDE - UPLOAD */}
         <div className="w-1/2 p-5 flex flex-col gap-4">
 
-          {/* HEADER */}
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Upload Proof</h2>
 
@@ -95,7 +92,6 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
             </button>
           </div>
 
-          {/* FILE INPUT */}
           <input
             type="file"
             accept="image/*"
@@ -103,7 +99,6 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
             className="p-2 border border-gray-700 rounded-lg"
           />
 
-          {/* PREVIEW (CONSTRAINED) */}
           <div className="flex-1 overflow-hidden flex items-center justify-center">
             {preview ? (
               <img
@@ -116,7 +111,6 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
             )}
           </div>
 
-          {/* UPLOAD BUTTON */}
           <button
             onClick={uploadImage}
             disabled={!file || loading}

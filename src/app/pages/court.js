@@ -77,12 +77,10 @@ export default function Court({ id }) {
         return `${hour12} ${period}`;
     }
 
-    // safe blocked slots
     const blockedHours = slots
         .filter(s => s.status === "confirmed" || s.status === "pending")
         .map(s => s.time);
 
-    // FIX 1: prevent invalid end time
     useEffect(() => {
         const startIndex = hours.indexOf(startTime);
         const endIndex = hours.indexOf(endTime);
@@ -94,13 +92,11 @@ export default function Court({ id }) {
 
     const startIndex = hours.indexOf(startTime);
 
-    // FIX 2: valid end times
     const validEndHours = hours.filter((h, idx) => {
         if (idx <= startIndex) return false;
         return true;
     });
 
-    // FIX 3: safe conflict detection (NO slice crash)
     function hasConflict(start, end) {
         const startHour = parseInt(start.slice(0, 2));
         const endHour = parseInt(end.slice(0, 2));
@@ -141,7 +137,6 @@ export default function Court({ id }) {
 
             <div className="flex items-start gap-5">
 
-                {/* LEFT */}
                 <div className="w-[65vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700">
 
                     <div className="flex items-center justify-between">
@@ -170,7 +165,6 @@ export default function Court({ id }) {
 
                 </div>
 
-                {/* RIGHT */}
                 <div className="w-[35vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700 flex flex-col gap-5">
 
                     <p className="text-2xl font-bold">Book this Court</p>
@@ -190,7 +184,6 @@ export default function Court({ id }) {
 
                         <div className="flex gap-5">
 
-                            {/* START */}
                             <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
                                 <label>Start Time</label>
                                 <select
@@ -210,7 +203,6 @@ export default function Court({ id }) {
                                 </select>
                             </div>
 
-                            {/* END */}
                             <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
                                 <label>End Time</label>
                                 <select
@@ -239,7 +231,6 @@ export default function Court({ id }) {
 
             </div>
 
-            {/* MODALS */}
             {bookingDetailsIsActive && (
                 <BookingDetails
                     isActive={setBookingDetailsIsActive}
