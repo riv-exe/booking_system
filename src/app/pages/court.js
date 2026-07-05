@@ -169,6 +169,11 @@ export default function Court({ id }) {
 
                     <p className="text-2xl font-bold">Book this Court</p>
 
+                    <div className="p-5 bg-background rounded-2xl flex flex-col gap-2">
+                        <p>Standard Rate</p>
+                        <p className="text-xl font-semibold">₱{court?.price} / hour</p>
+                    </div>
+
                     <div className="flex flex-col gap-3">
                         <p className="font-semibold">Booking Date</p>
                         <input
