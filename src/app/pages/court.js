@@ -54,6 +54,7 @@ export default function Court({ id }) {
             const res = await fetch("/api/auth/me");
             const data = await res.json();
             setUser(data.user);
+            console.log(data.user);
         }
         getUser();
     }, []);
@@ -69,18 +70,19 @@ export default function Court({ id }) {
         setBookingDate(date.toISOString().split("T")[0]);
     }
 
-    const displayDate = new Date(bookingDate).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
-
     function formatTimeLabel(time24) {
         const [hour] = time24.split(":").map(Number);
         const period = hour >= 12 ? "PM" : "AM";
         const hour12 = hour % 12 === 0 ? 12 : hour % 12;
         return `${hour12} ${period}`;
     }
+
+    // safe blocked slots
+    const blockedHours = slots
+        .filter(s => s.status === "confirmed" || s.status === "pending")
+        .map(s => s.time);
+
+    // FIX 1: prevent invalid end time
     useEffect(() => {
         const startIndex = hours.indexOf(startTime);
         const endIndex = hours.indexOf(endTime);
@@ -92,40 +94,47 @@ export default function Court({ id }) {
 
     const startIndex = hours.indexOf(startTime);
 
-    const validEndHours = hours.slice(startIndex + 1);
+    // FIX 2: valid end times
+    const validEndHours = hours.filter((h, idx) => {
+        if (idx <= startIndex) return false;
+        return true;
+    });
 
-    // async function bookingSubmit() {
-    //     if (!user) {
-    //         setBookingDetailsIsActive(true);
-    //         return;
-    //     }
+    // FIX 3: safe conflict detection (NO slice crash)
+    function hasConflict(start, end) {
+        const startHour = parseInt(start.slice(0, 2));
+        const endHour = parseInt(end.slice(0, 2));
 
-    //     const res = await fetch("/api/book", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({
-    //             user_id: user.id,
-    //             court_id: id,
-    //             booking_date: bookingDate,
-    //             start_time: `${startTime}:00`,
-    //             end_time: `${endTime}:00`,
-    //             total_price: totalPrice
-    //         })
-    //     });
+        return blockedHours.some((time) => {
+            if (!time) return false;
 
-    //     const data = await res.json();
+            const bookedHour = parseInt(time.slice(0, 2));
 
-    //     setReceiptData(data);
-    //     setReceiptOpen(true);
+            const bookedStart = bookedHour;
+            const bookedEnd = bookedHour + 1;
 
-    //     getSlots();
-    // }
+            return startHour < bookedEnd && endHour > bookedStart;
+        });
+    }
+
+    function handleBook() {
+        if (hasConflict(startTime, endTime)) {
+            alert("Selected time overlaps with an existing booking.");
+            return;
+        }
+
+        setBookingDetailsIsActive(true);
+    }
+
+    const displayDate = new Date(bookingDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
 
     const start = parseInt(startTime.slice(0, 2));
     const end = parseInt(endTime.slice(0, 2));
-
-    const hoursCount = Math.max(0, end - start);
-    const totalPrice = hoursCount * court?.price;
+    const totalPrice = Math.max(0, end - start) * court?.price;
 
     return (
         <div className="px-5 py-10">
@@ -136,21 +145,7 @@ export default function Court({ id }) {
                 <div className="w-[65vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700">
 
                     <div className="flex items-center justify-between">
-                        <p className="text-2xl font-bold">
-                            Court Availability
-                        </p>
-
-                        <div className="flex gap-2">
-                            <div className="bg-(--primary) px-2 py-1 text-xs rounded-full">
-                                Available
-                            </div>
-                            <div className="bg-red-700 px-2 py-1 text-xs rounded-full">
-                                Occupied
-                            </div>
-                            <div className="bg-yellow-600 px-2 py-1 text-xs rounded-full">
-                                Pending
-                            </div>
-                        </div>
+                        <p className="text-2xl font-bold">Court Availability</p>
                     </div>
 
                     <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl mt-3">
@@ -168,7 +163,7 @@ export default function Court({ id }) {
                             <DateButtons
                                 key={hour}
                                 time={formatTimeLabel(hour)}
-                                status={getSlotStatus(hour)} 
+                                status={getSlotStatus(hour)}
                             />
                         ))}
                     </div>
@@ -179,11 +174,6 @@ export default function Court({ id }) {
                 <div className="w-[35vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700 flex flex-col gap-5">
 
                     <p className="text-2xl font-bold">Book this Court</p>
-
-                    <div className="p-5 bg-background rounded-2xl flex flex-col gap-2">
-                        <p>Standard Rate</p>
-                        <p className="text-xl font-semibold">₱{court?.price} / hour</p>
-                    </div>
 
                     <div className="flex flex-col gap-3">
                         <p className="font-semibold">Booking Date</p>
@@ -200,6 +190,7 @@ export default function Court({ id }) {
 
                         <div className="flex gap-5">
 
+                            {/* START */}
                             <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
                                 <label>Start Time</label>
                                 <select
@@ -208,13 +199,18 @@ export default function Court({ id }) {
                                     className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full"
                                 >
                                     {hours.map((h) => (
-                                        <option key={h} value={h}>
+                                        <option
+                                            key={h}
+                                            value={h}
+                                            // disabled={blockedHours.includes(h)}
+                                        >
                                             {formatTimeLabel(h)}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
+                            {/* END */}
                             <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
                                 <label>End Time</label>
                                 <select
@@ -227,9 +223,6 @@ export default function Court({ id }) {
                                             {formatTimeLabel(h)}
                                         </option>
                                     ))}
-                                    <option value={"18:00"}>
-                                        6 PM
-                                    </option>
                                 </select>
                             </div>
 
@@ -237,7 +230,7 @@ export default function Court({ id }) {
                     </div>
 
                     <div className="bg-(--primary) p-3 rounded-2xl flex justify-center">
-                        <button onClick={() => setBookingDetailsIsActive(true)}>
+                        <button onClick={handleBook}>
                             Book Now
                         </button>
                     </div>
@@ -246,19 +239,7 @@ export default function Court({ id }) {
 
             </div>
 
-            {/* RECEIPT */}
-            <BookingReceipt
-                isOpen={receiptOpen}
-                setIsOpen={setReceiptOpen}
-                booking={receiptData?.booking}
-                booker={receiptData?.booker}
-                reference={receiptData?.reference}
-                court={court}
-                user={userData}
-                price={totalPrice}
-            />
-
-            {/* LOGIN MODAL */}
+            {/* MODALS */}
             {bookingDetailsIsActive && (
                 <BookingDetails
                     isActive={setBookingDetailsIsActive}
@@ -273,14 +254,22 @@ export default function Court({ id }) {
                     startTime={startTime}
                     endTime={endTime}
                     getSlots={getSlots}
-
-                    receiptOpen={receiptOpen}
                     setReceiptOpen={setReceiptOpen}
                     setReceiptData={setReceiptData}
                     setUserData={setUserData}
                 />
             )}
 
+            <BookingReceipt
+                isOpen={receiptOpen}
+                setIsOpen={setReceiptOpen}
+                booking={receiptData?.booking}
+                booker={receiptData?.booker}
+                reference={receiptData?.reference}
+                court={court}
+                user={userData}
+                price={totalPrice}
+            />
 
         </div>
     );
