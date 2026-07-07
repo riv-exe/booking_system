@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Navbar from "./components/layout/navbar";
 import FeatCourts from "./components/section/featCourts";
+import TrackStatus from "./components/layout/trackStatus";
 import Footer from "./components/layout/footer";
 
 export default function Home() {
@@ -29,7 +30,7 @@ export default function Home() {
       </div>
 
       <FeatCourts/>
-
+      <TrackStatus/>
       <Footer/>
     </div>
   );
