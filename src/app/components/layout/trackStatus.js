@@ -9,6 +9,7 @@ export default function TrackStatus() {
     const [endTime, setEndTime] = useState("");
     const [courtNumber, setCourtNumber] = useState(0);
     const [courtAddress, setCourtAddress] = useState("");
+    const [remark, setRemark] = useState("");
     const [error, setError] = useState("");
 
     const getStatus = async (e) => {
@@ -28,6 +29,7 @@ export default function TrackStatus() {
             setCourtNumber(data.court_number);
             setDate(data.date);
             setCourtAddress(data.address);
+            setRemark(data.remark);
         }
         catch (err) {
             setError("Something went wrong");
@@ -99,6 +101,7 @@ export default function TrackStatus() {
                 <p><strong>Time:</strong> {formatTime(startTime)} - {formatTime(endTime)}</p>
                 <p><strong>Court Number:</strong> {courtNumber}</p>
                 <p><strong>Court Address:</strong> {courtAddress}</p>
+                {remark && (<p><strong>Remark:</strong> {remark}</p>)}
             </div>
         )}
 
