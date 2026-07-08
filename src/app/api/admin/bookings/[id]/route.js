@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function PATCH(req, { params }) {
     try {
         const { id } = await params;
-        const { status } = await req.json();
+        const { status, remark } = await req.json();
 
         if (!["confirmed", "rejected", "pending"].includes(status)) {
             return NextResponse.json(
@@ -16,11 +16,11 @@ export async function PATCH(req, { params }) {
         const result = await query(
             `
             UPDATE bookings
-            SET status = $1
-            WHERE id = $2
+            SET status = $1, remark = $2
+            WHERE id = $3
             RETURNING *
             `,
-            [status, id]
+            [status, remark, id]
         );
 
         if (result.rows.length === 0) {

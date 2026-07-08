@@ -28,7 +28,7 @@ export default function FeatCourts() {
                         id={court.id}
                         title={court.name}
                         img={court.img_url}
-                        description={court.name}
+                        description={court.address}
                         price={court.price}/>
                     ))
                 }

@@ -61,11 +61,11 @@ export default function Bookings() {
         setTimeFilter("all");
     }
 
-    async function updateStatus(id, status) {
+    async function updateStatus(id, status, remark) {
         const res = await fetch(`/api/admin/bookings/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status }),
+            body: JSON.stringify({ status, remark }),
         });
 
         const data = await res.json();
@@ -77,7 +77,7 @@ export default function Bookings() {
 
         setBookings((prev) =>
             prev.map((b) =>
-                b.id === id ? { ...b, status } : b
+                b.id === id ? { ...b, status, remark } : b
             )
         );
     }
@@ -195,8 +195,8 @@ export default function Bookings() {
             <AdminBookingModal
                 booking={selectedBooking}
                 onClose={() => setSelectedBooking(null)}
-                onConfirm={(id) => updateStatus(id, "confirmed")}
-                onReject={(id) => updateStatus(id, "rejected")}
+                onConfirm={(id, remark) => updateStatus(id, "confirmed", remark)}
+                onReject={(id, remark) => updateStatus(id, "rejected", remark)}
             />
 
         </div>

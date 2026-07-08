@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 export default function AdminBookingModal({
   booking,
   onClose,
@@ -7,6 +7,8 @@ export default function AdminBookingModal({
   onReject
 }) {
   if (!booking) return null;
+
+  const [remark, setRemark] = useState(booking.remark || "");
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -49,6 +51,15 @@ export default function AdminBookingModal({
               <p className="capitalize font-bold">{booking.status}</p>
             </div>
 
+            <div className="p-3 border rounded-xl">
+              <p className="text-sm text-gray-400">Remark</p>
+              <input type="text" id="remarkInput" className={`w-full p-1 focus:outline-none ${
+                booking.status === "pending"
+                  ? "cursor-text"
+                  : "cursor-not-allowed select-none"
+              }`}
+                placeholder="Enter remark..." value={remark} autoComplete="off" onChange={(e) => setRemark(e.target.value)} readOnly={booking.status !== 'pending'} />
+              </div>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -74,14 +85,14 @@ export default function AdminBookingModal({
           <div className="flex justify-end gap-3">
 
             <button
-              onClick={() => {onReject(booking.id); onClose(); }}
+              onClick={() => {onReject(booking.id, remark); onClose(); }}
               className="bg-red-600 px-4 py-2 rounded-lg"
             >
               Reject
             </button>
 
             <button
-              onClick={() => {onConfirm(booking.id); onClose();}}
+              onClick={() => {onConfirm(booking.id, remark); onClose();}}
               className="bg-(--primary) px-4 py-2 rounded-lg"
             >
               Confirm
