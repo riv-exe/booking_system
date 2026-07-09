@@ -6,7 +6,7 @@ import Navbar from "../components/layout/navbar";
 import Bookings from "./pages/bookings";
 import CourtSchedule from "./pages/courtSchedule";
 import Dashboard from "./pages/dashboard";
-import POS from "./pages/pos";
+import CourtManagement from "./pages/courtManagement";
 
 export default function AdminLayout() {
     const [page, setPage] = useState(1);
@@ -33,7 +33,8 @@ export default function AdminLayout() {
                     {page === 1 && <Dashboard />}
                     {page === 2 && <Bookings />}
                     {page === 3 && <CourtSchedule />}
-                    {page === 4 && <POS />}
+                    {page === 4 && <CourtManagement />}
+                    {/* {page === 4 && <POS />} */}
 
                 </div>
             </div>
