@@ -9,7 +9,8 @@ import DeleteCourtModal from "@/app/components/modals/deleteCourtModal";
 
 export default function CourtManagement() {
     const [courts, setCourts] = useState([]);
-
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
     const [selectedCourt, setSelectedCourt] = useState(null);
 
     const [showAddModal, setShowAddModal] = useState(false);
@@ -36,9 +37,25 @@ export default function CourtManagement() {
         setShowDeleteModal(true);
     }
 
+    const filteredCourts = courts.filter(function (court) {
+        const matchesSearch = court.name
+            .toLowerCase()
+            .includes(search.toLowerCase());
+
+        let matchesStatus = true;
+
+        if (statusFilter === "active") {
+            matchesStatus = court.is_active;
+        } else if (statusFilter === "inactive") {
+            matchesStatus = !court.is_active;
+        }
+
+        return matchesSearch && matchesStatus;
+    });
+
     return (
         <>
-            <div className="p-6">
+            <div className="p-6 pb-0">
                 <h1 className="text-2xl font-bold mb-6">
                     Court Management
                 </h1>
@@ -57,88 +74,118 @@ export default function CourtManagement() {
                         <input
                             type="text"
                             placeholder="Search courts..."
+                            value={search}
+                            onChange={function (e) {
+                                setSearch(e.target.value);
+                            }}
                             className="border px-3 py-2 rounded-lg"
                         />
 
-                        <select className="border rounded-lg px-3 py-2">
-                            <option>All Courts</option>
+                        <select
+                            className="border rounded-lg px-3 py-2"
+                            value={statusFilter}
+                            onChange={function (e) {
+                                setStatusFilter(e.target.value);
+                            }}
+                        >
+                            <option value="all">All Courts</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
                         </select>
 
-                        <button className="bg-red-500 text-white px-4 py-2 rounded-lg">
+                        <button
+                            onClick={function () {
+                                setSearch("");
+                                setStatusFilter("all");
+                            }}
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                        >
                             Clear
                         </button>
                     </div>
                 </div>
 
-                <table className="w-full mt-6">
-                    <thead>
-                        <tr>
-                            <th className="border p-2">Image</th>
-                            <th className="border p-2">Name</th>
-                            <th className="border p-2">Location</th>
-                            <th className="border p-2">Price</th>
-                            <th className="border p-2">Status</th>
-                            <th className="border p-2">Action</th>
-                        </tr>
-                    </thead>
+                <div className="mt-6 max-h-[calc(100vh-270px)] overflow-y-auto border rounded-xl">
+                    <table className="w-full">
+                        <thead className="sticky top-0 z-10 bg-(--secondary)">
+                            <tr>
+                                <th className="p-4 text-center">Image</th>
+                                <th className="p-4 text-center">Name</th>
+                                <th className="p-4 text-center">Location</th>
+                                <th className="p-4 text-center">Price</th>
+                                <th className="p-4 text-center">Status</th>
+                                <th className="p-4 text-center">Action</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        {courts.map(function (court) {
-                            return (
-                                <tr key={court.id}>
-                                    <td className="border p-2">
-                                        <Image
-                                            src={court.img_url}
-                                            alt={court.name}
-                                            width={100}
-                                            height={100}
-                                        />
-                                    </td>
+                        <tbody>
+                            {filteredCourts.length > 0 ? (
+                                filteredCourts.map(function (court) {
+                                    return (
+                                        <tr key={court.id} className="border-t">
+                                            <td className="p-2 text-center align-middle">
+                                                <Image
+                                                    src={court.img_url}
+                                                    alt={court.name}
+                                                    width={100}
+                                                    height={100}
+                                                    className="mx-auto rounded"
+                                                />
+                                            </td>
 
-                                    <td className="border p-2">
-                                        {court.name}
-                                    </td>
+                                            <td className="p-2 text-center align-middle">
+                                                {court.name}
+                                            </td>
 
-                                    <td className="border p-2">
-                                        {court.address}
-                                    </td>
+                                            <td className="p-2 text-center align-middle">
+                                                {court.address}
+                                            </td>
 
-                                    <td className="border p-2">
-                                        ₱{court.price}
-                                    </td>
+                                            <td className="p-2 text-center align-middle">
+                                                ₱{court.price}
+                                            </td>
 
-                                    <td className="border p-2">
-                                        {court.is_active
-                                            ? "Active"
-                                            : "Inactive"}
-                                    </td>
+                                            <td className="p-2 text-center align-middle">
+                                                {court.is_active ? "Active" : "Inactive"}
+                                            </td>
 
-                                    <td className="border p-2">
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={function () {
-                                                    handleEdit(court);
-                                                }}
-                                                className="bg-green-500 text-white px-4 py-2 rounded-lg"
-                                            >
-                                                Edit
-                                            </button>
+                                            <td className="p-2 text-center align-middle">
+                                                <div className="flex justify-center gap-2">
+                                                    <button
+                                                        onClick={function () {
+                                                            handleEdit(court);
+                                                        }}
+                                                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                                                    >
+                                                        Edit
+                                                    </button>
 
-                                            <button
-                                                onClick={function () {
-                                                    handleDelete(court);
-                                                }}
-                                                className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
+                                                    <button
+                                                        onClick={function () {
+                                                            handleDelete(court);
+                                                        }}
+                                                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan={6}
+                                        className="text-center py-6"
+                                    >
+                                        No courts found.
                                     </td>
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <AddCourtModal
@@ -146,6 +193,7 @@ export default function CourtManagement() {
                 onClose={function () {
                     setShowAddModal(false);
                 }}
+                onSuccess={fetchCourts}
             />
 
             <EditCourtModal
@@ -154,6 +202,7 @@ export default function CourtManagement() {
                 onClose={function () {
                     setShowEditModal(false);
                 }}
+                onSuccess={fetchCourts}
             />
 
             <DeleteCourtModal
@@ -162,6 +211,7 @@ export default function CourtManagement() {
                 onClose={function () {
                     setShowDeleteModal(false);
                 }}
+                onSuccess={fetchCourts}
             />
         </>
     );

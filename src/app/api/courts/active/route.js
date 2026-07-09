@@ -5,7 +5,7 @@ import cloudinary from "@/app/lib/cloudinary";
 export async function GET(req) {
   try {
     const courts = await query(
-      `SELECT * FROM courts ORDER BY id ASC`
+      `SELECT * FROM courts WHERE is_active = true`
     );
 
     return NextResponse.json({ courts: courts.rows });

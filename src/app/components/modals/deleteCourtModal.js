@@ -4,8 +4,24 @@ export default function DeleteCourtModal({
     open,
     court,
     onClose,
+    onSuccess,
 }) {
     if (!open || !court) return null;
+
+    async function handleDelete() {
+        const res = await fetch("/api/courts/" + court.id, {
+            method: "DELETE",
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            onSuccess();
+            onClose();
+        } else {
+            alert(data.message);
+        }
+    }
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -27,7 +43,10 @@ export default function DeleteCourtModal({
                         Cancel
                     </button>
 
-                    <button className="bg-red-500 text-white px-4 py-2 rounded">
+                    <button
+                        onClick={handleDelete}
+                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    >
                         Delete
                     </button>
                 </div>
