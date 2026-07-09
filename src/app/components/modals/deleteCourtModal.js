@@ -9,7 +9,7 @@ export default function DeleteCourtModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-[400px]">
+            <div className="bg-[var(--background)] p-6 rounded-lg w-[400px]">
                 <h2 className="text-xl font-bold text-red-500 mb-4">
                     Delete Court
                 </h2>
