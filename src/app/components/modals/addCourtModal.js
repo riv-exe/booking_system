@@ -52,7 +52,7 @@ export default function AddCourtModal({ open, onClose, onSuccess }) {
         formData.append("status", status);
         formData.append("image", image);
 
-        const res = await fetch("/api/courts", {
+        const res = await fetch("/api/admin/court-management", {
             method: "POST",
             body: formData,
         });

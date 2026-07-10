@@ -15,7 +15,7 @@ export default function FeatCourts() {
 
     async function fetchCourts() {
         try {
-            const res = await fetch("/api/courts/active");
+            const res = await fetch("/api/courts");
             const data = await res.json();
 
             setCourts(data.courts || []);

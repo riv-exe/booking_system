@@ -22,7 +22,7 @@ export default function CourtManagement() {
     }, []);
 
     async function fetchCourts() {
-        const res = await fetch("/api/courts");
+        const res = await fetch("/api/admin/court-management");
         const data = await res.json();
         setCourts(data.courts);
     }

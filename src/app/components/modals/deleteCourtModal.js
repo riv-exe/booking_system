@@ -9,7 +9,7 @@ export default function DeleteCourtModal({
     if (!open || !court) return null;
 
     async function handleDelete() {
-        const res = await fetch("/api/courts/" + court.id, {
+        const res = await fetch(`/api/admin/court-management/${court.id}`, {
             method: "DELETE",
         });
 

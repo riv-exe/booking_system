@@ -53,11 +53,7 @@ export default function AdminBookingModal({
 
             <div className="p-3 border rounded-xl">
               <p className="text-sm text-gray-400">Remark</p>
-              <input type="text" id="remarkInput" className={`w-full p-1 focus:outline-none ${
-                booking.status === "pending"
-                  ? "cursor-text"
-                  : "cursor-not-allowed select-none"
-              }`}
+              <input type="text" id="remarkInput" className="w-full p-1 focus:outline-none"
                 placeholder="Enter remark..." value={remark} autoComplete="off" onChange={(e) => setRemark(e.target.value)} readOnly={booking.status !== 'pending'} />
               </div>
           </div>

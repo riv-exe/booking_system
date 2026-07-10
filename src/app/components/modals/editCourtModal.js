@@ -66,7 +66,7 @@ export default function EditCourtModal({
             formData.append("image", image);
         }
 
-        const res = await fetch("/api/courts/" + court.id, {
+        const res = await fetch(`/api/admin/court-management/${court.id}`, {
             method: "PUT",
             body: formData,
         });
