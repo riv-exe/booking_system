@@ -17,7 +17,7 @@ export default function FeatCourts() {
         try {
             const res = await fetch("/api/courts");
             const data = await res.json();
-
+            
             setCourts(data.courts || []);
 
             if(data.courts.length <= 6) {
