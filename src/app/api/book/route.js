@@ -22,6 +22,7 @@ export async function POST(req) {
         end_time,
         name,
         email,
+        revenue,
         contactNum,
         payment_proof_url
     } = await req.json();
@@ -70,12 +71,13 @@ export async function POST(req) {
                     start_time,
                     end_time,
                     reference_code,
+                    revenue,
                     payment_proof_url
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 RETURNING *
                 `,
-                [booker_id, court_id, booking_date, start_time, end_time, reference_code, payment_proof_url]
+                [booker_id, court_id, booking_date, start_time, end_time, reference_code, revenue, payment_proof_url]
             );
 
             return NextResponse.json({
@@ -106,12 +108,13 @@ export async function POST(req) {
                 start_time,
                 end_time,
                 reference_code,
+                revenue,
                 payment_proof_url
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
             `,
-            [booker_id, court_id, booking_date, start_time, end_time, reference_code, payment_proof_url]
+            [booker_id, court_id, booking_date, start_time, end_time, reference_code, revenue, payment_proof_url]
         );
 
         return NextResponse.json({

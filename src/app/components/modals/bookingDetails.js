@@ -58,6 +58,7 @@ export default function BookingDetails({
           booking_date: bookingDate,
           start_time: `${startTime}:00`,
           end_time: `${endTime}:00`,
+          revenue: price,
           payment_proof_url: secureUrl
         }),
       });

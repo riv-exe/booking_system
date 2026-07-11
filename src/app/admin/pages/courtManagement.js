@@ -105,9 +105,9 @@ export default function CourtManagement() {
                     </div>
                 </div>
 
-                <div className="mt-6 max-h-[calc(100vh-270px)] overflow-y-auto border rounded-xl">
+                <div className="my-6 overflow-y-auto border rounded-xl">
                     <table className="w-full">
-                        <thead className="sticky top-0 z-10 bg-(--secondary)">
+                        <thead className="bg-(--secondary)">
                             <tr>
                                 <th className="p-4 text-center">Image</th>
                                 <th className="p-4 text-center">Name</th>
@@ -129,7 +129,7 @@ export default function CourtManagement() {
                                                     alt={court.name}
                                                     width={100}
                                                     height={100}
-                                                    className="mx-auto rounded"
+                                                    className="mx-auto rounded h-auto w-auto"
                                                 />
                                             </td>
 
