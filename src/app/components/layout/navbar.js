@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +50,7 @@ export default function Navbar() {
                 setUser(null);
                 setLoading(false);
 
-                router.refresh();
+                router.push("/");
               }}
               className="px-3 py-1 border rounded-2xl"
             >
@@ -58,14 +60,14 @@ export default function Navbar() {
         ) : (
           <>
             <button
-              onClick={() => router.push("/signin")}
+              onClick={() => {router.push(`/signin?redirect=${encodeURIComponent(pathname)}`);}}
               className="border border-gray-500 rounded-2xl px-3 py-1 cursor-pointer"
             >
               Sign In
             </button>
 
             <button
-              onClick={() => router.push("/signup")}
+              onClick={() => {router.push("/signup")}}
               className="rounded-2xl px-3 py-1 bg-[var(--primary)] cursor-pointer"
             >
               Get Started

@@ -1,3 +1,0 @@
-1. action in admin bookings should have confirm to confirm the payment of client
-2. user should pose a proof of payment(screenshot) during bookings
-3. admin will confirm it in bookings

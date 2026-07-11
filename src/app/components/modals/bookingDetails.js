@@ -123,6 +123,7 @@ export default function BookingDetails({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Full Name"
+              disabled
               className="p-3 rounded-xl bg-black/20 border border-gray-700"
             />
 
@@ -130,13 +131,14 @@ export default function BookingDetails({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
+              disabled
               className="p-3 rounded-xl bg-black/20 border border-gray-700"
             />
 
             <input
               value={contactNum}
               onChange={(e) => setContactNum(e.target.value)}
-              placeholder="Contact"
+              placeholder="Contact"disabled
               className="p-3 rounded-xl bg-black/20 border border-gray-700"
             />
           </div>
