@@ -9,7 +9,7 @@ export default function AdminBookingModal({
   if (!booking) return null;
 
   const [remark, setRemark] = useState(booking.remark || "");
-
+  console.log(booking);
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
@@ -33,6 +33,11 @@ export default function AdminBookingModal({
             <div className="p-3 border rounded-xl">
               <p className="text-sm text-gray-400">Customer</p>
               <p className="font-semibold">{booking.booker_name}</p>
+            </div>
+
+            <div className="p-3 border rounded-xl">
+              <p className="text-sm text-gray-400">Total Amount</p>
+              <p className="font-semibold">{parseFloat(booking.revenue).toFixed(2)}</p>
             </div>
 
             <div className="p-3 border rounded-xl">

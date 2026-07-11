@@ -1,3 +1,7 @@
-1. action in admin bookings should have confirm to confirm the payment of client
-2. user should pose a proof of payment(screenshot) during bookings
-3. admin will confirm it in bookings
+1. rate limiting to avoid spam
+2. check authentication (admin and member)
+3. email api sender
+4. dashboard cards and notification
+5. all bookings filter backend logic revise and add status filter
+6. admin page to to disable a date/time
+7. fix booking start and end time logic
