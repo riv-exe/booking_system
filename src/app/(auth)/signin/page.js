@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -36,7 +37,8 @@ export default function SignInPage() {
       if (data.user.role === "admin") {
         router.push("/admin");
       } else {
-        router.push("/");
+        const redirect = searchParams.get("redirect") || "/";
+        router.replace(redirect);
       }
       
     } catch (err) {

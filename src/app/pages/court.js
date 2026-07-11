@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import DateButtons from "../components/ui/dateButtons";
 import BookingDetails from "../components/modals/bookingDetails";
 import BookingReceipt from "../components/modals/bookingReceipt";
@@ -22,6 +23,9 @@ export default function Court({ id }) {
     const [receiptOpen, setReceiptOpen] = useState(false);
     const [receiptData, setReceiptData] = useState(null);
     const [userData, setUserData] = useState(null);
+
+    const router = useRouter();
+    const pathname = usePathname();
 
     const hours = [
         "06:00","07:00","08:00","09:00","10:00",
@@ -116,6 +120,11 @@ export default function Court({ id }) {
     function handleBook() {
         if (hasConflict(startTime, endTime)) {
             alert("Selected time overlaps with an existing booking.");
+            return;
+        }
+
+        if (!user?.id) {
+            router.push(`/signin?redirect=${encodeURIComponent(pathname)}`);
             return;
         }
 
