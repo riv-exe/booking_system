@@ -148,7 +148,7 @@ export default function AdminCourtSchedule() {
                                             >
                                                 {booking ? (
                                                     <div className="flex flex-col">
-                                                        <span className="font-semibold">
+                                                        <span className="font-semibold uppercase">
                                                             {booking.name}
                                                         </span>
                                                         <span className="text-xs opacity-70">

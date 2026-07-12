@@ -187,12 +187,16 @@ export async function generateSalesReport(data) {
 
         }
 
+        const generatedAt = new Date().toLocaleString("en-PH", {
+            timeZone: "Asia/Manila",
+        });
+
         write(
-            `Generated: ${new Date().toLocaleString()}`,
+            `Generated: ${generatedAt}`,
             10,
             false,
             gray
-        );
+        )
 
         write(
             `Filter: ${filter.replaceAll("_"," ").toUpperCase()}`,

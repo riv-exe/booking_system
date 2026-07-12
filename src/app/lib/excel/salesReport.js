@@ -71,9 +71,13 @@ export async function generateSalesExcel(data) {
 
     worksheet.addRow([]);
 
+    const generatedAt = new Date().toLocaleString("en-PH", {
+        timeZone: "Asia/Manila",
+    });
+
     worksheet.addRow([
         "Generated:",
-        new Date().toLocaleString()
+        generatedAt
     ]);
 
     worksheet.addRow([
