@@ -3,13 +3,16 @@ import { query } from "@/app/lib/db";
 
 export async function GET(req) {
     try {
-
         const { searchParams } = new URL(req.url);
 
         const customerFilter = searchParams.get("customerFilter");
         const courtFilter = searchParams.get("courtFilter");
         const dateFilter = searchParams.get("dateFilter");
         const statusFilter = searchParams.get("statusFilter");
+
+        const page = Number(searchParams.get("page")) || 1;
+        const limit = Number(searchParams.get("limit")) || 10;
+        const offset = (page - 1) * limit;
 
         let conditions = [];
         let values = [];
@@ -39,6 +42,28 @@ export async function GET(req) {
                 ? `WHERE ${conditions.join(" AND ")}`
                 : "";
 
+        // Count total filtered bookings
+        const totalBookings = await query(
+            `
+            SELECT COUNT(*) AS total
+            FROM bookings b
+            JOIN courts c ON c.id = b.court_id
+            JOIN bookers bo ON bo.id = b.booker_id
+            ${whereClause}
+            `,
+            values
+        );
+
+        // Create a copy so LIMIT/OFFSET don't affect the count query values
+        const bookingValues = [...values];
+
+        bookingValues.push(limit);
+        const limitIndex = bookingValues.length;
+
+        bookingValues.push(offset);
+        const offsetIndex = bookingValues.length;
+
+        // Fetch paginated bookings
         const bookings = await query(
             `
             SELECT
@@ -59,17 +84,32 @@ export async function GET(req) {
             JOIN courts c ON c.id = b.court_id
             JOIN bookers bo ON bo.id = b.booker_id
             ${whereClause}
-            ORDER BY b.booking_date DESC, b.start_time ASC;
+            ORDER BY b.booking_date DESC, b.start_time ASC
+            LIMIT $${limitIndex}
+            OFFSET $${offsetIndex};
             `,
-            values
+            bookingValues
         );
 
-        const courtNames = await query(`SELECT name, id from courts ORDER BY id ASC;`);
+        const courtNames = await query(`
+            SELECT
+                id,
+                name
+            FROM courts
+            ORDER BY id ASC;
+        `);
 
         return NextResponse.json({
             bookings: bookings.rows,
-            courtNames: courtNames.rows
+            courtNames: courtNames.rows,
+            page,
+            limit,
+            total: Number(totalBookings.rows[0].total),
+            totalPages: Math.ceil(
+                Number(totalBookings.rows[0].total) / limit
+            ),
         });
+
     } catch (err) {
         console.error(err);
 

@@ -16,16 +16,31 @@ export default function CourtManagement() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [loading, setLoading] = useState(false);;
+    
+
+    async function fetchCourts() {
+            setLoading(true);
+        try{
+            const res = await fetch("/api/admin/court-management");
+            const data = await res.json();
+            
+            if (!res.ok) {
+                console.error("Failed to fetch bookings");
+                return;
+            }
+
+            setCourts(data.courts);
+        }catch(error){
+            console.error(error)
+        }finally{
+            setLoading(false);
+        }
+    }
 
     useEffect(function () {
         fetchCourts();
     }, []);
-
-    async function fetchCourts() {
-        const res = await fetch("/api/admin/court-management");
-        const data = await res.json();
-        setCourts(data.courts);
-    }
 
     function handleEdit(court) {
         setSelectedCourt(court);
@@ -119,69 +134,80 @@ export default function CourtManagement() {
                         </thead>
 
                         <tbody>
-                            {filteredCourts.length > 0 ? (
-                                filteredCourts.map(function (court) {
-                                    return (
-                                        <tr key={court.id} className="border-t">
-                                            <td className="p-2 text-center align-middle">
-                                                <Image
-                                                    src={court.img_url}
-                                                    alt={court.name}
-                                                    width={100}
-                                                    height={100}
-                                                    className="mx-auto rounded h-auto w-auto"
-                                                />
-                                            </td>
-
-                                            <td className="p-2 text-center align-middle">
-                                                {court.name}
-                                            </td>
-
-                                            <td className="p-2 text-center align-middle">
-                                                {court.address}
-                                            </td>
-
-                                            <td className="p-2 text-center align-middle">
-                                                ₱{court.price}
-                                            </td>
-
-                                            <td className="p-2 text-center align-middle">
-                                                {court.is_active ? "Active" : "Inactive"}
-                                            </td>
-
-                                            <td className="p-2 text-center align-middle">
-                                                <div className="flex justify-center gap-2">
-                                                    <button
-                                                        onClick={function () {
-                                                            handleEdit(court);
-                                                        }}
-                                                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                                                    >
-                                                        Edit
-                                                    </button>
-
-                                                    <button
-                                                        onClick={function () {
-                                                            handleDelete(court);
-                                                        }}
-                                                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            ) : (
+                            {loading ? (
                                 <tr>
                                     <td
                                         colSpan={6}
                                         className="text-center py-6"
                                     >
-                                        No courts found.
+                                        Loading courts...
                                     </td>
                                 </tr>
+                            ) : (
+                                filteredCourts.length > 0 ? (
+                                    filteredCourts.map(function (court) {
+                                        return (
+                                            <tr key={court.id} className="border-t">
+                                                <td className="p-2 text-center align-middle">
+                                                    <Image
+                                                        src={court.img_url}
+                                                        alt={court.name}
+                                                        width={100}
+                                                        height={100}
+                                                        className="mx-auto rounded h-auto w-auto"
+                                                    />
+                                                </td>
+
+                                                <td className="p-2 text-center align-middle">
+                                                    {court.name}
+                                                </td>
+
+                                                <td className="p-2 text-center align-middle">
+                                                    {court.address}
+                                                </td>
+
+                                                <td className="p-2 text-center align-middle">
+                                                    ₱{court.price}
+                                                </td>
+
+                                                <td className="p-2 text-center align-middle">
+                                                    {court.is_active ? "Active" : "Inactive"}
+                                                </td>
+
+                                                <td className="p-2 text-center align-middle">
+                                                    <div className="flex justify-center gap-2">
+                                                        <button
+                                                            onClick={function () {
+                                                                handleEdit(court);
+                                                            }}
+                                                            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                                                        >
+                                                            Edit
+                                                        </button>
+
+                                                        <button
+                                                            onClick={function () {
+                                                                handleDelete(court);
+                                                            }}
+                                                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan={6}
+                                            className="text-center py-6"
+                                        >
+                                            No courts found.
+                                        </td>
+                                    </tr>
+                                )
                             )}
                         </tbody>
                     </table>

@@ -76,7 +76,7 @@ export default function AdminCourtSchedule() {
 
                     <input
                         type="text"
-                        placeholder="Search name..."
+                        placeholder="Search customer..."
                         value={searchName}
                         onChange={(e) => setSearchName(e.target.value)}
                         className="border px-3 py-2 rounded-lg w-48"

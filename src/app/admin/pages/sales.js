@@ -11,8 +11,10 @@ export default function Sales() {
     const [peakHoursData, setPeakHoursData] = useState([]);
     const [recentTransactionsData, setRecentTransactionsData] = useState([]);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const getFilterData = async () => {
+            setLoading(true);
         try{
             const res = await fetch(`/api/admin/sales?filter=${filter}`);
             const data = await res.json();
@@ -33,6 +35,8 @@ export default function Sales() {
 
         }catch(err){
             console.error(err);
+        }finally{
+            setLoading(false);
         }
     };
 
@@ -269,7 +273,7 @@ export default function Sales() {
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="">
+                            <tr >
                                 <th className="text-center p-3">Date</th>
                                 <th className="text-center p-3">Reference</th>
                                 <th className="text-center p-3">Customer</th>
@@ -280,79 +284,90 @@ export default function Sales() {
                         </thead>
 
                         <tbody>
-                            {filteredTransactions.length > 0 ? (
-                                filteredTransactions.map((transaction) => (
-                                    <tr
-                                        key={transaction.reference_code}
-                                        className="border-t"
+                            {loading ? (
+                                <tr>
+                                    <td
+                                        colSpan={6}
+                                        className="text-center py-8"
                                     >
-                                        <td className="text-center">
-                                            {new Date(transaction.created_at).toLocaleString("en-US", {
-                                                month: "short",
-                                                day: "numeric",
-                                                year: "numeric",
-                                                hour: "numeric",
-                                                minute: "2-digit",
-                                                hour12: true,
-                                            })}
-                                        </td>
-
-                                        <td className="text-center p-3">
-                                            {transaction.reference_code}
-                                        </td>
-
-                                        <td className="text-center">
-                                            {transaction.customer_name}
-                                        </td>
-
-                                        <td className="text-center">
-                                            {transaction.court_name}
-                                        </td>
-
-                                        <td className="text-center">
-                                                {new Date(
-                                                    transaction.booking_date
-                                                ).toLocaleDateString("en-US", {
-                                                    weekday: "long",
-                                                })}, &nbsp;
-                                                {new Date(
-                                                    transaction.booking_date
-                                                ).toLocaleDateString("en-US", {
-                                                    month: "long",
+                                        Loading records...
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredTransactions.length > 0 ? (
+                                    filteredTransactions.map((transaction) => (
+                                        <tr
+                                            key={transaction.reference_code}
+                                            className="border-t"
+                                        >
+                                            <td className="text-center">
+                                                {new Date(transaction.created_at).toLocaleString("en-US", {
+                                                    month: "short",
                                                     day: "numeric",
                                                     year: "numeric",
-                                                })},  &nbsp;
-                                                {new Date(
-                                                    `1970-01-01T${transaction.start_time}`
-                                                ).toLocaleTimeString("en-US", {
-                                                    hour: "numeric",
-                                                    minute: "2-digit",
-                                                    hour12: true,
-                                                })}{" "}
-                                                -{" "}
-                                                {new Date(
-                                                    `1970-01-01T${transaction.end_time}`
-                                                ).toLocaleTimeString("en-US", {
                                                     hour: "numeric",
                                                     minute: "2-digit",
                                                     hour12: true,
                                                 })}
-                                        </td>
+                                            </td>
 
-                                        <td className="text-center">
-                                            ₱{Number(transaction.revenue).toLocaleString()}
+                                            <td className="text-center p-3">
+                                                {transaction.reference_code}
+                                            </td>
+
+                                            <td className="text-center uppercase">
+                                                {transaction.customer_name}
+                                            </td>
+
+                                            <td className="text-center">
+                                                {transaction.court_name}
+                                            </td>
+
+                                            <td className="text-center">
+                                                    {new Date(
+                                                        transaction.booking_date
+                                                    ).toLocaleDateString("en-US", {
+                                                        weekday: "long",
+                                                    })}, &nbsp;
+                                                    {new Date(
+                                                        transaction.booking_date
+                                                    ).toLocaleDateString("en-US", {
+                                                        month: "long",
+                                                        day: "numeric",
+                                                        year: "numeric",
+                                                    })},  &nbsp;
+                                                    {new Date(
+                                                        `1970-01-01T${transaction.start_time}`
+                                                    ).toLocaleTimeString("en-US", {
+                                                        hour: "numeric",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    })}{" "}
+                                                    -{" "}
+                                                    {new Date(
+                                                        `1970-01-01T${transaction.end_time}`
+                                                    ).toLocaleTimeString("en-US", {
+                                                        hour: "numeric",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    })}
+                                            </td>
+
+                                            <td className="text-center">
+                                                ₱{Number(transaction.revenue).toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan={6}
+                                            className="text-center py-8"
+                                        >
+                                            No transactions found.
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td
-                                        colSpan={6}
-                                        className="text-center py-8 text-gray-500"
-                                    >
-                                        No transactions found.
-                                    </td>
-                                </tr>
+                                )
                             )}
                         </tbody>
                     </table>

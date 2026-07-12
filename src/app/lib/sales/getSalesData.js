@@ -9,7 +9,7 @@ export async function getSalesData(filter) {
             INNER JOIN courts c ON c.id = b.court_id
             WHERE b.status = 'confirmed'
             ORDER BY b.created_at DESC
-            LIMIT 20`
+            LIMIT 25`
         );
 
         let dateCondition = "";
