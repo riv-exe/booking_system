@@ -6,59 +6,34 @@ import { useEffect, useMemo, useState } from "react";
 export default function Bookings() {
     const [bookings, setBookings] = useState([]);
     const [selectedBooking, setSelectedBooking] = useState(null);
-
-    const [search, setSearch] = useState("");
+    const [courtNames, setCourtNames] = useState([]);
+    const [nameFilter, setNameFilter] = useState("");
     const [courtFilter, setCourtFilter] = useState("all");
     const [dateFilter, setDateFilter] = useState("");
-    const [timeFilter, setTimeFilter] = useState("all");
+    const [statusFilter, setStatusFilter] = useState("all");
 
-    const hours = [
-        "06:00","07:00","08:00","09:00","10:00",
-        "11:00","12:00","13:00","14:00","15:00",
-        "16:00","17:00"
-    ];
 
     useEffect(() => {
-        async function loadBookings() {
-            const res = await fetch("/api/admin/all-bookings");
+        const timer = setTimeout(async () => {
+            const res = await fetch(
+                `/api/admin/all-bookings?customerFilter=${encodeURIComponent(nameFilter)}&courtFilter=${encodeURIComponent(courtFilter)}&dateFilter=${encodeURIComponent(dateFilter)}&statusFilter=${encodeURIComponent(statusFilter)}`
+            );
+
             const data = await res.json();
+
             setBookings(data.bookings || []);
-        }
-        loadBookings();
-    }, []);
+            setCourtNames(data.courtNames || []);
+        }, 300);
 
-    const courts = useMemo(() => {
-        return [...new Set(bookings.map((b) => b.court_name))];
-    }, [bookings]);
+        return () => clearTimeout(timer);
 
-    const normalizeDate = (date) => {
-        if (!date) return "";
-        return new Date(date).toISOString().split("T")[0];
-    };
-
-    const filteredBookings = bookings.filter((booking) => {
-        const matchesSearch =
-            booking.booker_name?.toLowerCase().includes(search.toLowerCase());
-
-        const matchesCourt =
-            courtFilter === "all" || booking.court_name === courtFilter;
-
-        const matchesDate =
-            dateFilter === "" ||
-            normalizeDate(booking.booking_date) === dateFilter;
-
-        const matchesTime =
-            timeFilter === "all" ||
-            booking.start_time.slice(0, 5) === timeFilter;
-
-        return matchesSearch && matchesCourt && matchesDate && matchesTime;
-    });
+    }, [nameFilter, courtFilter, dateFilter, statusFilter]);
 
     function clearFilters() {
-        setSearch("");
+        setNameFilter("");
         setCourtFilter("all");
         setDateFilter("");
-        setTimeFilter("all");
+        setStatusFilter("all");
     }
 
     async function updateStatus(id, status, remark) {
@@ -93,8 +68,8 @@ export default function Bookings() {
                 <input
                     className="border rounded-lg px-3 py-2"
                     placeholder="Search customer..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
                 />
 
                 <select
@@ -103,9 +78,9 @@ export default function Bookings() {
                     onChange={(e) => setCourtFilter(e.target.value)}
                 >
                     <option value="all">All Courts</option>
-                    {courts.map((court) => (
-                        <option key={court} value={court}>
-                            {court}
+                    {courtNames.map((c) => (
+                        <option key={c.id} value={c.name}>
+                            {c.name}
                         </option>
                     ))}
                 </select>
@@ -119,13 +94,13 @@ export default function Bookings() {
 
                 <select
                     className="border rounded-lg px-3 py-2"
-                    value={timeFilter}
-                    onChange={(e) => setTimeFilter(e.target.value)}
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
                 >
-                    <option value="all">All Times</option>
-                    {hours.map((h) => (
-                        <option key={h} value={h}>{h}</option>
-                    ))}
+                    <option value="all">All Bookings</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
                 </select>
 
                 <button
@@ -153,20 +128,20 @@ export default function Bookings() {
                     </thead>
 
                     <tbody>
-                        {filteredBookings.length === 0 ? (
+                        {bookings.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="p-6 text-center">
                                     No bookings found
                                 </td>
                             </tr>
                         ) : (
-                            filteredBookings.map((b) => (
+                            bookings.map((b) => (
                                 <tr key={b.id} className="border-t">
 
                                     <td className="p-4">{b.booker_name}</td>
                                     <td className="p-4">{b.court_name}</td>
                                     <td className="p-4">
-                                        {normalizeDate(b.booking_date)}
+                                        {b.booking_date}
                                     </td>
                                     <td className="p-4">
                                         {b.start_time.slice(0,5)} - {b.end_time.slice(0,5)}

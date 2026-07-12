@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 export default function AdminBookingModal({
   booking,
   onClose,
@@ -9,7 +10,6 @@ export default function AdminBookingModal({
   if (!booking) return null;
 
   const [remark, setRemark] = useState(booking.remark || "");
-  console.log(booking);
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
@@ -64,20 +64,23 @@ export default function AdminBookingModal({
           </div>
 
           <div className="flex flex-col gap-3">
-
             <p className="text-sm text-gray-400">Payment Proof</p>
 
             {booking.payment_proof_url ? (
-              <img
-                src={booking.payment_proof_url}
-                className="rounded-xl border max-h-[350px] object-cover"
-              />
+              <div className="flex justify-center">
+                <Image
+                  src={booking.payment_proof_url}
+                  alt="Payment Proof"
+                  width={600}
+                  height={900}
+                  className="w-60 h-auto object-contain rounded-lg"
+                />
+              </div>
             ) : (
               <div className="p-3 border rounded-xl text-gray-400">
                 No proof uploaded
               </div>
             )}
-
           </div>
 
         </div>

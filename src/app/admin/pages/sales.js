@@ -139,7 +139,7 @@ export default function Sales() {
                 </div>
 
                 <div className="bg-[var(--secondary)] border rounded-xl p-5">
-                    <p className="text-sm text-gray-500">Total Bookings</p>
+                    <p className="text-sm text-gray-500">Total Confirmed Bookings</p>
                     <h2 className="text-3xl font-bold mt-2">{totalBookings || "0"}</h2>
                 </div>
 

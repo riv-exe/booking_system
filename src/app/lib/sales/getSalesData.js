@@ -16,22 +16,31 @@ export async function getSalesData(filter) {
 
         switch (filter) {
             case "today":
-                dateCondition = `bookings.booking_date = CURRENT_DATE`;
+                dateCondition = `
+                    bookings.created_at >= CURRENT_DATE
+                    AND bookings.created_at < CURRENT_DATE + interval '1 day'
+                `;
                 break;
+
             case "this_week":
-                dateCondition = `bookings.booking_date >= date_trunc('week', CURRENT_DATE)
-                                AND bookings.booking_date <
-                                date_trunc('week', CURRENT_DATE) + interval '1 week'`;
+                dateCondition = `
+                    bookings.created_at >= date_trunc('week', CURRENT_DATE)
+                    AND bookings.created_at < date_trunc('week', CURRENT_DATE) + interval '1 week'
+                `;
                 break;
+
             case "this_year":
-                dateCondition = `bookings.booking_date >= date_trunc('year', CURRENT_DATE)
-                                AND bookings.booking_date <
-                                date_trunc('year', CURRENT_DATE) + interval '1 year'`;
+                dateCondition = `
+                    bookings.created_at >= date_trunc('year', CURRENT_DATE)
+                    AND bookings.created_at < date_trunc('year', CURRENT_DATE) + interval '1 year'
+                `;
                 break;
-            default:
-                dateCondition = `bookings.booking_date >= date_trunc('month', CURRENT_DATE)
-                                AND bookings.booking_date <
-                                date_trunc('month', CURRENT_DATE) + interval '1 month'`;
+
+            default: // this_month
+                dateCondition = `
+                    bookings.created_at >= date_trunc('month', CURRENT_DATE)
+                    AND bookings.created_at < date_trunc('month', CURRENT_DATE) + interval '1 month'
+                `;
         }
 
         const salesData = await query(`SELECT 

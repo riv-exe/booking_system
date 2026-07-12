@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import Image from "next/image";
 export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -101,11 +101,15 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
 
           <div className="flex-1 overflow-hidden flex items-center justify-center">
             {preview ? (
-              <img
-                src={preview}
-                alt="preview"
-                className="max-h-[200px] object-contain rounded-lg border border-gray-700"
-              />
+              <div className="flex items-center justify-center w-full h-full">
+                <Image
+                  src={preview}
+                  alt="Receipt Preview"
+                  width={600}
+                  height={900}
+                  className="w-auto h-full object-contain rounded-lg"
+                />
+              </div>
             ) : (
               <p className="text-gray-500 text-sm">No image selected</p>
             )}
