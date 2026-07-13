@@ -1,4 +1,5 @@
 "use client";
+import { getAdminInfo, addActivity } from "@/app/services/activity";
 
 export default function DeleteCourtModal({
     open,
@@ -9,6 +10,13 @@ export default function DeleteCourtModal({
     if (!open || !court) return null;
 
     async function handleDelete() {
+        const adminInfo = await getAdminInfo();
+        const activityMessage = `Court (${court.name}) has been deleted.`;
+
+        if(adminInfo){
+            addActivity(adminInfo.id, activityMessage);
+        }
+
         const res = await fetch(`/api/admin/court-management/${court.id}`, {
             method: "DELETE",
         });

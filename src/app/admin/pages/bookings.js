@@ -2,6 +2,7 @@
 
 import AdminBookingModal from "@/app/components/modals/adminBookingModal";
 import { useEffect, useState } from "react";
+import {getAdminInfo, addActivity} from '@/app/services/activity.js';
 
 export default function Bookings() {
     const [bookings, setBookings] = useState([]);
@@ -93,7 +94,7 @@ export default function Bookings() {
         setPage(1);
     }
 
-    async function updateStatus(id, status, remark) {
+    async function updateStatus(id, status, remark, activityMessage) {
         const res = await fetch(`/api/admin/bookings/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -108,6 +109,13 @@ export default function Bookings() {
         }
 
         await loadBookings();
+        
+        const adminInfo = await getAdminInfo();
+        
+        if (adminInfo) {
+            addActivity(adminInfo.id, activityMessage);
+        }
+        
     }
     
     const startBooking = totalBookings === 0 ? 0 : (page - 1) * LIMIT + 1;
@@ -280,8 +288,14 @@ export default function Bookings() {
             <AdminBookingModal
                 booking={selectedBooking}
                 onClose={() => setSelectedBooking(null)}
-                onConfirm={(id, remark) => updateStatus(id, "confirmed", remark)}
-                onReject={(id, remark) => updateStatus(id, "rejected", remark)}
+                onConfirm={
+                    (id, remark, reference) => {
+                        updateStatus(id, "confirmed", remark, `Confirmed booking ${reference}.`)
+                    }
+                }
+                onReject={(id, remark, reference) => {
+                    updateStatus(id, "rejected", remark, `Rejected booking ${reference}.`)
+                }}
             />
 
         </div>

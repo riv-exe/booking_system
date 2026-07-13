@@ -70,6 +70,9 @@ export default function BookingDetails({
         return;
       }
 
+      console.log(result.reference);
+      console.log(result.userId);
+
       isActive(false);
 
       setUserData({

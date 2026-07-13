@@ -7,23 +7,35 @@ export default function Dashboard() {
         totalBookings: 0,
         todayBookings: 0,
         totalCourts: 0,
-        totalRevenue: 0
+        totalRevenue: 0,
+        pendingBookings: 0,
+        upcomingBookings: 0,
+        confirmedBookings: 0,
+        newMembers: 0
     });
 
-    const [recentBookings, setRecentBookings] = useState([]);
+    const [recentActivities, setRecentActivities] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        async function load() {
+    const loadDashboardData = async () => {
+        setLoading(true);
+        try{
             const res = await fetch("/api/admin/dashboard");
             const data = await res.json();
 
             setStats(data.stats);
-            setRecentBookings(data.recentBookings || []);
+            setRecentActivities(data.recentActivities || []);
+        }catch(error){
+            console.error(error);
+        }finally{
+            setLoading(false);
         }
+    };
 
-        load();
+    useEffect(() => {
+        loadDashboardData();
     }, []);
-
+    
     return (
         <div className="p-6 flex flex-col gap-6">
 
@@ -35,54 +47,81 @@ export default function Dashboard() {
 
                 <div className="p-4 rounded-xl bg-(--secondary) border">
                     <p className="text-sm opacity-70">Total Bookings</p>
-                    <p className="text-2xl font-bold">{stats.totalBookings}</p>
+                    <p className="text-2xl font-bold">{stats.totalBookings ?? 0}</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-(--secondary) border">
                     <p className="text-sm opacity-70">Today&apos;s Bookings</p>
-                    <p className="text-2xl font-bold">{stats.todayBookings}</p>
+                    <p className="text-2xl font-bold">{stats.todayBookings ?? 0}</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-(--secondary) border">
-                    <p className="text-sm opacity-70">Courts</p>
-                    <p className="text-2xl font-bold">{stats.totalCourts}</p>
+                    <p className="text-sm opacity-70">Active Courts</p>
+                    <p className="text-2xl font-bold">{stats.totalCourts ?? 0}</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-(--secondary) border">
-                    <p className="text-sm opacity-70">Revenue (not done)</p>
-                    <p className="text-2xl font-bold">₱{stats.totalRevenue}</p>
+                    <p className="text-sm opacity-70">Monthly Revenue</p>
+                    <p className="text-2xl font-bold">₱{stats.totalRevenue ?? 0}</p>
                 </div>
 
             </div>
 
-            <div className="bg-(--secondary) border rounded-xl p-4">
+            <div className="grid grid-cols-4 gap-4">
 
-                <h2 className="font-bold mb-4">
-                    Recent Bookings
-                </h2>
-
-                <div className="flex flex-col gap-2">
-
-                    {recentBookings.map((b) => (
-                        <div
-                            key={b.id}
-                            className="flex justify-between p-3 bg-background rounded-lg border"
-                        >
-                            <div>
-                                <p className="font-semibold">{b.booker_name}</p>
-                                <p className="text-xs opacity-70">{b.court_name}</p>
-                            </div>
-
-                            <div className="text-right">
-                                <p className="text-sm">{b.booking_date}</p>
-                                <p className="text-xs opacity-70">
-                                    {b.start_time.slice(0,5)} - {b.end_time.slice(0,5)}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-
+                <div className="p-4 rounded-xl bg-(--secondary) border">
+                    <p className="text-sm opacity-70">Pending Bookings</p>
+                    <p className="text-2xl font-bold">{stats.pendingBookings ?? 0}</p>
                 </div>
+
+                <div className="p-4 rounded-xl bg-(--secondary) border">
+                    <p className="text-sm opacity-70">Upcoming Bookings</p>
+                    <p className="text-2xl font-bold">{stats.upcomingBookings ?? 0}</p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-(--secondary) border">
+                    <p className="text-sm opacity-70">Monthly Confirmed Bookings</p>
+                    <p className="text-2xl font-bold">{stats.confirmedBookings ?? 0}</p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-(--secondary) border">
+                    <p className="text-sm opacity-70">Monthly New Members</p>
+                    <p className="text-2xl font-bold">{stats.newMembers ?? 0}</p>
+                </div>
+
+
+            </div>
+
+            <div className="bg-(--secondary) border rounded-xl p-4">
+                <h2 className="text-lg font-semibold pb-2 border-b mb-2">
+                        Recent Activities
+                    </h2>
+                {loading ? (
+                        <div className='text-center p-4'>Loading activities...</div>
+                    ) : (
+                        recentActivities ? (
+                            recentActivities.map((a) => (
+                                <div className="flex justify-between py-2 px-5" key={a.id}>
+                                    <span>{a.activity}</span>
+
+                                    <span>
+                                        {new Date(a.created_at).toLocaleString("en-PH", {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "numeric",
+                                            minute: "2-digit",
+                                            hour12: true,
+                                        })}
+                                    </span>
+                                </div>
+                            ))
+                        ) : (
+                            <div className='text-center p-4'>No recent activities...</div>
+                        )
+                    )
+
+                }
             </div>
 
         </div>

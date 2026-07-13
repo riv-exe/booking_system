@@ -1,7 +1,7 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { getAdminInfo, addActivity } from "@/app/services/activity";
 
 export default function EditCourtModal({
     open,
@@ -52,9 +52,7 @@ export default function EditCourtModal({
         setPreviewUrl(url);
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-
+    const editCourt = async () =>{
         const formData = new FormData();
 
         formData.append("name", name);
@@ -77,6 +75,18 @@ export default function EditCourtModal({
             onSuccess();
             handleClose();
         }
+    }
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        const adminInfo = await getAdminInfo();
+        const activityMessage = `Court (${name}) has been edited.`;
+
+        if(adminInfo){
+            addActivity(adminInfo.id, activityMessage);
+        }
+        editCourt();
     }
 
     function handleClose() {

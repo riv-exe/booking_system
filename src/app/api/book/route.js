@@ -28,7 +28,6 @@ export async function POST(req) {
     } = await req.json();
 
     let booker_id;
-
     if (!court_id || !booking_date || !start_time || !end_time) {
         return NextResponse.json(
             { error: "Required fields are missing." },
@@ -40,6 +39,10 @@ export async function POST(req) {
         const reference_code = generateRef();
 
         if (user_id) {
+            
+            console.log(user_id);
+            console.log(reference_code);
+
             const user = await query(
                 `SELECT * FROM users WHERE id = $1`,
                 [user_id]
@@ -79,50 +82,17 @@ export async function POST(req) {
                 `,
                 [booker_id, court_id, booking_date, start_time, end_time, reference_code, revenue, payment_proof_url]
             );
+            
+            //add activity log
+            const activityMessage = `New pending booking ${reference_code}.`;
+            await query(`INSERT INTO activity_logs(activity, user_id) VALUES($1, $2)`, [activityMessage, user_id]);
 
             return NextResponse.json({
                 message: "Booking successfully created.",
                 booker: bookers.rows[0],
-                booking: bookings.rows[0],
-                reference: reference_code
+                booking: bookings.rows[0]
             });
         }
-
-        const bookers = await query(
-            `
-            INSERT INTO bookers (user_id, name, email, contact_no)
-            VALUES ($1, $2, $3, $4)
-            RETURNING id, user_id, name, email, contact_no
-            `,
-            [user_id, name, email, contactNum]
-        );
-
-        booker_id = bookers.rows[0].id;
-
-        const bookings = await query(
-            `
-            INSERT INTO bookings (
-                booker_id,
-                court_id,
-                booking_date,
-                start_time,
-                end_time,
-                reference_code,
-                revenue,
-                payment_proof_url
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING *
-            `,
-            [booker_id, court_id, booking_date, start_time, end_time, reference_code, revenue, payment_proof_url]
-        );
-
-        return NextResponse.json({
-            message: "Booking successfully created.",
-            booker: bookers.rows[0],
-            booking: bookings.rows[0],
-            reference: reference_code
-        });
 
     } catch (error) {
         console.log(error);

@@ -280,7 +280,7 @@ export async function generateSalesExcel(data) {
 
             transaction.reference_code,
 
-            transaction.customer_name,
+            transaction.customer_name.toUpperCase(),
 
             transaction.court_name,
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-
+import { getAdminInfo, addActivity } from "@/app/services/activity";
 export default function AddCourtModal({ open, onClose, onSuccess }) {
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
@@ -36,9 +36,7 @@ export default function AddCourtModal({ open, onClose, onSuccess }) {
         setPreviewUrl(url);
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-
+    const addCourt = async () => {
         if (!image) {
             alert("Please select an image.");
             return;
@@ -69,6 +67,20 @@ export default function AddCourtModal({ open, onClose, onSuccess }) {
             setImage(null);
             setPreviewUrl("");
         }
+    }
+    
+    
+    async function handleSubmit(e) {
+        e.preventDefault();
+
+        const adminInfo = await getAdminInfo();
+        const activityMessage = `New court (${name}) has been added.`;
+
+
+        if(adminInfo){
+            addActivity(adminInfo.id, activityMessage);
+        }
+        addCourt();
     }
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

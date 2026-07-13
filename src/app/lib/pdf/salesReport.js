@@ -425,10 +425,10 @@ const headerY = y;
 
 page.drawRectangle({
     x: margin,
-    y: headerY - 5,
+    y: headerY - 6,
     width: pageWidth - (margin * 2),
     height: 20,
-    color: rgb(0.92, 0.92, 0.92)
+    color: rgb(85/255, 182/255, 255/255)
 });
 
 page.drawText("Date", {
@@ -468,7 +468,7 @@ page.drawText("Amount", {
     font: bold
 });
 
-y -= 28;
+y -= 18;
 
 
 // ---------- Rows ----------
@@ -482,10 +482,10 @@ recentTransactions.forEach(function(transaction, index){
 
         page.drawRectangle({
             x: margin,
-            y: y - 5,
+            y: y - 6,
             width: pageWidth - (margin * 2),
             height: 20,
-            color: rgb(0.92,0.92,0.92)
+            color: rgb(85/255, 182/255, 255/255)
         });
 
         page.drawText("Date",{
@@ -523,13 +523,13 @@ recentTransactions.forEach(function(transaction, index){
             font:bold
         });
 
-        y -= 28;
+        y -= 18;
 
     }
 
     // Zebra stripes
 
-    if(index % 2 === 0){
+    if(index % 2 !== 0){
 
         page.drawRectangle({
 
@@ -541,7 +541,7 @@ recentTransactions.forEach(function(transaction, index){
 
             height:16,
 
-            color:rgb(0.98,0.98,0.98)
+            color:rgb(215/255, 238/255, 255/255)
 
         });
 
@@ -601,7 +601,7 @@ recentTransactions.forEach(function(transaction, index){
 
     page.drawText(
 
-        transaction.customer_name,
+        transaction.customer_name.toUpperCase(),
 
         {
 

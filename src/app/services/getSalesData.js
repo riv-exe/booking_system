@@ -57,9 +57,8 @@ export async function getSalesData(filter) {
                                     FROM courts 
                                     LEFT JOIN bookings ON courts.id=bookings.court_id AND bookings.status='confirmed' AND ${dateCondition}
                                     GROUP BY courts.id, courts.name 
-                                    ORDER BY total_revenue DESC;
-
-`);
+                                    ORDER BY total_revenue DESC;`);
+                                    
         const peakHoursData = await query(`WITH hour_slots AS (
                                     SELECT TIME '06:00' AS hour_slot
                                     UNION ALL SELECT TIME '07:00'

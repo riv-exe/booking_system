@@ -58,7 +58,6 @@ export default function Court({ id }) {
             const res = await fetch("/api/auth/me");
             const data = await res.json();
             setUser(data.user);
-            console.log(data.user);
         }
         getUser();
     }, []);

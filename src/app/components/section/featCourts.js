@@ -24,8 +24,6 @@ export default function FeatCourts() {
                 document.querySelectorAll(".scroll-btn").forEach(function(btn) {
                     btn.style.display = "none";
                 });
-                document.querySelector(".card-container").style.justifyContent = "center";
-                
             }
         } catch (error) {
             console.error(error);
@@ -72,7 +70,10 @@ export default function FeatCourts() {
                     ref={scrollRef}
                     className="overflow-x-auto scrollbar-hide p-7"
                 >
-                    <div className="card-container flex justify-left gap-8 w-full">
+                    <div className={`card-container flex justify-left gap-8 w-full 
+                        ${
+                            courts.length <= 6 ? "justify-center" : "justify-start"
+                        }`}>
                         {courts.map(function (court) {
                             return (
                                 <div
