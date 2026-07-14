@@ -133,7 +133,6 @@ export default function Bookings() {
             <div className="flex justify-between">
             <h1 className="text-2xl font-bold mb-6">Bookings</h1>
 
-            {/* FILTERS */}
             <div className="flex flex-wrap gap-3 mb-6">
 
                 <input
@@ -194,7 +193,7 @@ export default function Bookings() {
                 </button>
             </div>
                     </div>
-            {/* TABLE */}
+
             <div className="overflow-x-auto rounded-xl border">
 
                 <table className="w-full">
@@ -284,7 +283,6 @@ export default function Bookings() {
 
             </div>
 
-            {/* MODAL */}
             <AdminBookingModal
                 booking={selectedBooking}
                 onClose={() => setSelectedBooking(null)}

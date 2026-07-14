@@ -15,20 +15,16 @@ export default function AdminLayout() {
     return (
         <div className="min-h-screen w-full overflow-x-hidden">
 
-            {/* NAVBAR */}
-            <div className="h-[75px] w-full fixed top-0 left-0 z-50">
+            <div className="h-19w-full fixed top-0 left-0 z-50">
                 <Navbar />
             </div>
 
-            {/* MAIN WRAPPER */}
-            <div className="flex pt-[75px] w-full min-w-0">
+            <div className="flex pt-19 w-full min-w-0">
 
-                {/* SIDEBAR */}
-                <div className="w-[20%] min-h-[calc(100vh-75px)] bg-(--secondary) fixed left-0 top-[75px] overflow-y-auto">
+                <div className="w-[20%] min-h-[calc(100vh-75px)] bg-(--secondary) fixed left-0 top-19 overflow-y-auto">
                     <AdminSidebar page={page} setPage={setPage} />
                 </div>
 
-                {/* CONTENT */}
                 <div className="ml-[20%] w-[80%] min-w-0 p-4 overflow-x-hidden">
 
                     {page === 1 && <Dashboard />}

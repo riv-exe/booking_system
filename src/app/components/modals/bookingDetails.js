@@ -70,17 +70,9 @@ export default function BookingDetails({
         return;
       }
 
-      console.log(result.reference);
-      console.log(result.userId);
-
       isActive(false);
 
-      setUserData({
-        name,
-        email,
-        contactNum
-      });
-
+      setUserData({ name, email, contactNum });
       setReceiptData(result);
       setReceiptOpen(true);
 
@@ -99,67 +91,66 @@ export default function BookingDetails({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
 
-      <div className="bg-[var(--background)] w-full max-w-2xl rounded-2xl shadow-xl border border-gray-700 p-6 flex flex-col gap-6">
+      <div className="bg-background w-full max-w-2xl rounded-2xl shadow-2xl border border-(--line-color) p-6 md:p-8 flex flex-col gap-6">
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-xl font-bold">Complete Your Booking</h2>
-            <p className="text-sm text-gray-400">
-              Fill in your details to confirm reservation
+            <h2 className="font-display text-xl md:text-2xl font-bold">
+              Complete Your Booking
+            </h2>
+            <p className="text-sm opacity-60 mt-1">
+              Confirm your details and upload payment proof
             </p>
           </div>
 
           <button
             onClick={() => isActive(false)}
-            className="text-gray-400 hover:text-white text-xl"
+            aria-label="Close"
+            className="w-8 h-8 rounded-full flex items-center justify-center opacity-60 hover:opacity-100 hover:bg-(--secondary) transition-colors cursor-pointer shrink-0"
           >
             ✕
           </button>
         </div>
 
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
 
-          <div className="col-span-3 flex flex-col gap-4">
+          <div className="sm:col-span-3 bg-(--secondary) border border-(--line-color) rounded-xl p-5 flex flex-col gap-4">
 
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Full Name"
-              disabled
-              className="p-3 rounded-xl bg-black/20 border border-gray-700"
-            />
+            <div>
+              <p className="text-xs opacity-50 mb-0.5">Full Name</p>
+              <p className="font-medium">{name || "—"}</p>
+            </div>
 
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              disabled
-              className="p-3 rounded-xl bg-black/20 border border-gray-700"
-            />
+            <div className="border-t border-(--line-color)" />
 
-            <input
-              value={contactNum}
-              onChange={(e) => setContactNum(e.target.value)}
-              placeholder="Contact"disabled
-              className="p-3 rounded-xl bg-black/20 border border-gray-700"
-            />
+            <div>
+              <p className="text-xs opacity-50 mb-0.5">Email</p>
+              <p className="font-medium break-all">{email || "—"}</p>
+            </div>
+
+            <div className="border-t border-(--line-color)" />
+
+            <div>
+              <p className="text-xs opacity-50 mb-0.5">Contact</p>
+              <p className="font-medium">{contactNum || "—"}</p>
+            </div>
           </div>
 
-          <div className="col-span-2 flex flex-col gap-4">
+          <div className="sm:col-span-2 flex flex-col gap-4">
 
-            <div className="p-4 bg-black/20 border border-gray-700 rounded-xl">
-              <p className="font-semibold">{title}</p>
-              <p className="text-sm text-gray-400">{bookingDate}</p>
-              <p className="text-sm text-gray-400">
-                {startTime} - {endTime}
+            <div className="p-4 bg-(--secondary) border border-(--line-color) rounded-xl">
+              <p className="font-semibold">{title || court?.name}</p>
+              <p className="text-sm opacity-60 mt-1">{bookingDate}</p>
+              <p className="text-sm opacity-60">
+                {startTime} – {endTime}
               </p>
             </div>
 
-            <div className="p-4 bg-black/20 border border-gray-700 rounded-xl">
-              <p>Total</p>
-              <p className="text-2xl font-bold text-[var(--primary)]">
+            <div className="p-4 bg-(--secondary) border border-(--line-color) rounded-xl">
+              <p className="text-xs opacity-50">Total</p>
+              <p className="text-2xl font-bold">
                 ₱{price}
               </p>
             </div>
@@ -169,10 +160,10 @@ export default function BookingDetails({
         <button
           onClick={bookingSubmit}
           disabled={loading}
-          className="w-full bg-[var(--primary)] p-3 rounded-xl font-semibold disabled:opacity-60"
+          className="w-full bg-(--primary) text-(--white) hover:brightness-110 transition-all p-3.5 rounded-xl font-semibold disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
         >
           {loading
-            ? "Processing Booking..."
+            ? "Processing Booking…"
             : secureUrl
               ? "Confirm Booking"
               : "Upload Payment Proof"}

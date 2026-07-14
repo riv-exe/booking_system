@@ -138,30 +138,64 @@ export default function Court({ id }) {
 
     const start = parseInt(startTime.slice(0, 2));
     const end = parseInt(endTime.slice(0, 2));
-    const totalPrice = Math.max(0, end - start) * court?.price;
+    const hoursSelected = Math.max(0, end - start);
+    const rate = court?.price || 0;
+    const totalPrice = hoursSelected * rate;
 
     return (
-        <div className="px-5 py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-14">
 
-            <div className="flex items-start gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6">
 
-                <div className="w-[65vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700">
+                <div className="bg-(--secondary) p-6 md:p-8 rounded-2xl border border-(--line-color) flex flex-col">
 
-                    <div className="flex items-center justify-between">
-                        <p className="text-2xl font-bold">Court Availability</p>
+                    <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">
+                        Court Availability
+                    </h2>
+
+                    {court ? (
+                        <div className="bg-background border border-(--line-color) py-4 px-5 rounded-xl flex items-center justify-between">
+                            <p className="font-semibold text-lg">{court?.name}</p>
+                            <p className="text-sm opacity-60">₱{rate} / hour</p>
+                        </div>
+                    ) : (
+                        <div className="bg-background border border-(--line-color) py-4 px-5 rounded-xl h-13 animate-pulse" />
+                    )}
+
+                    <div className="bg-background border border-(--line-color) py-3 px-4 rounded-xl flex justify-between items-center mt-3">
+                        <button
+                            onClick={() => changeDate(-1)}
+                            aria-label="Previous day"
+                            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--line-color) transition-colors cursor-pointer"
+                        >
+                            ‹
+                        </button>
+                        <p className="font-medium text-sm md:text-base">{displayDate}</p>
+                        <button
+                            onClick={() => changeDate(1)}
+                            aria-label="Next day"
+                            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-(--line-color) transition-colors cursor-pointer"
+                        >
+                            ›
+                        </button>
                     </div>
 
-                    <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl mt-3">
-                        <p>{court?.name}</p>
+                    <div className="flex items-center gap-5 mt-5 mb-3 text-xs opacity-60">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-(--primary)/70" />
+                            Available
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-(--shuttle) live-dot " />
+                            Pending
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-(--foreground)/25" />
+                            Booked
+                        </span>
                     </div>
 
-                    <div className="bg-background border border-gray-700 py-3 px-5 rounded-2xl flex justify-between items-center mt-3">
-                        <button onClick={() => changeDate(-1)}>&lt;</button>
-                        <p>{displayDate}</p>
-                        <button onClick={() => changeDate(1)}>&gt;</button>
-                    </div>
-
-                    <div className="grid grid-cols-4 gap-5 mt-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 flex-1">
                         {hours.map((hour) => (
                             <DateButtons
                                 key={hour}
@@ -173,69 +207,85 @@ export default function Court({ id }) {
 
                 </div>
 
-                <div className="w-[35vw] bg-(--secondary) p-5 rounded-2xl border border-gray-700 flex flex-col gap-5">
+                <div className="bg-(--secondary) p-6 md:p-8 rounded-2xl border border-(--line-color) flex flex-col">
 
-                    <p className="text-2xl font-bold">Book this Court</p>
+                    <h2 className="font-display text-2xl font-bold mb-6">Book this Court</h2>
 
-                    <div className="p-5 bg-background rounded-2xl flex flex-col gap-2">
-                        <p>Standard Rate</p>
-                        <p className="text-xl font-semibold">₱{court?.price} / hour</p>
-                    </div>
+                    <div className="flex flex-col gap-4">
 
-                    <div className="flex flex-col gap-3">
-                        <p className="font-semibold">Booking Date</p>
-                        <input
-                            type="date"
-                            className="bg-[var(--background)] border border-gray-700 py-2 px-5 rounded-2xl cursor-pointer"
-                            value={bookingDate}
-                            onChange={(e) => setBookingDate(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                        <p className="font-semibold">Pick a time slot</p>
-
-                        <div className="flex gap-5">
-
-                            <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
-                                <label>Start Time</label>
-                                <select
-                                    value={startTime}
-                                    onChange={(e) => setStartTime(e.target.value)}
-                                    className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full"
-                                >
-                                    {hours.map((h) => (
-                                        <option
-                                            key={h}
-                                            value={h}
-                                            // disabled={blockedHours.includes(h)}
-                                        >
-                                            {formatTimeLabel(h)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
-                                <label>End Time</label>
-                                <select
-                                    value={endTime}
-                                    onChange={(e) => setEndTime(e.target.value)}
-                                    className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full"
-                                >
-                                    {validEndHours.map((h) => (
-                                        <option key={h} value={h}>
-                                            {formatTimeLabel(h)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
+                        <div className="p-4 bg-background border border-(--line-color) rounded-xl">
+                            <p className="text-xs opacity-50 mb-1">Standard Rate</p>
+                            <p className="text-xl font-bold">₱{rate}<span className="text-sm font-normal opacity-60"> / hour</span></p>
                         </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs opacity-60">Booking Date</label>
+                            <input
+                                type="date"
+                                className="bg-background border border-(--line-color) py-2.5 px-4 rounded-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-(--primary)/50"
+                                value={bookingDate}
+                                onChange={(e) => setBookingDate(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-xs opacity-60">Pick a time slot</label>
+
+                            <div className="flex gap-3">
+
+                                <div className="bg-background border border-(--line-color) py-2.5 px-4 rounded-xl w-full">
+                                    <label className="text-[11px] opacity-50">Start</label>
+                                    <select
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                        className="bg-transparent w-full text-sm font-medium focus:outline-none cursor-pointer mt-0.5"
+                                    >
+                                        {hours.map((h) => (
+                                            <option key={h} value={h}>
+                                                {formatTimeLabel(h)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="bg-background border border-(--line-color) py-2.5 px-4 rounded-xl w-full">
+                                    <label className="text-[11px] opacity-50">End</label>
+                                    <select
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                        className="bg-transparent w-full text-sm font-medium focus:outline-none cursor-pointer mt-0.5"
+                                    >
+                                        {validEndHours.map((h) => (
+                                            <option key={h} value={h}>
+                                                {formatTimeLabel(h)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className="bg-(--primary) p-3 rounded-2xl flex justify-center">
-                        <button onClick={handleBook}>
+                    <div className="flex-1" />
+
+                    <div className="flex flex-col gap-4 pt-6">
+                        <div className="border-t border-(--line-color) pt-4 flex flex-col gap-1.5 text-sm">
+                            <div className="flex justify-between opacity-60">
+                                <span>{hoursSelected} hr{hoursSelected !== 1 ? "s" : ""} × ₱{rate}</span>
+                                <span>₱{totalPrice}</span>
+                            </div>
+                            <div className="flex justify-between font-bold text-base pt-1">
+                                <span>Total</span>
+                                <span>₱{totalPrice}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={handleBook}
+                            className="bg-(--primary) text-(--white) hover:brightness-110 transition-all p-3.5 rounded-xl font-semibold cursor-pointer"
+                        >
                             Book Now
                         </button>
                     </div>

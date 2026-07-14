@@ -52,8 +52,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-      <div className="w-full max-w-md p-6 rounded-2xl bg-[var(--secondary)]">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="w-full max-w-md p-6 rounded-2xl bg-(--secondary)">
 
         <h1 className="text-2xl font-bold mb-6 text-center">
           Create Account
@@ -68,7 +68,7 @@ export default function SignUpPage() {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-3 rounded-lg bg-black/20"
+            className="w-full p-3 rounded-lg bg-black/5"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -76,7 +76,7 @@ export default function SignUpPage() {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 rounded-lg bg-black/20"
+            className="w-full p-3 rounded-lg bg-black/5"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -84,7 +84,7 @@ export default function SignUpPage() {
           <input
             type="text"
             placeholder="Contact Number"
-            className="w-full p-3 rounded-lg bg-black/20"
+            className="w-full p-3 rounded-lg bg-black/5"
             value={contactNum}
             onChange={(e) => setContactNum(e.target.value)}
           />
@@ -92,7 +92,7 @@ export default function SignUpPage() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-3 rounded-lg bg-black/20"
+            className="w-full p-3 rounded-lg bg-black/5"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -100,7 +100,7 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[var(--primary)] text-white p-3 rounded-lg cursor-pointer hover:opacity-90"
+            className="w-full bg-(--primary) text-white p-3 rounded-lg cursor-pointer hover:opacity-90"
           >
             {loading ? "Creating account..." : "Sign Up"}
           </button>
@@ -110,7 +110,7 @@ export default function SignUpPage() {
           Already have an account?{" "}
           <span
             onClick={() => router.push("/signin")}
-            className="text-[var(--primary)] cursor-pointer underline"
+            className="text-(--primary) cursor-pointer underline"
           >
             Sign in
           </span>

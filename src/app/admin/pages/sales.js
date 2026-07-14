@@ -108,7 +108,6 @@ export default function Sales() {
     };
     return (
         <div className="p-6 flex flex-col gap-6">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold">Sales Report</h1>
 
@@ -135,32 +134,30 @@ export default function Sales() {
                 </div>
             </div>
 
-            {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 ">
-                <div className="rounded-xl p-5 bg-[var(--secondary)] border">
+                <div className="rounded-xl p-5 bg-(--secondary) border">
                     <p className="text-sm text-gray-500">Total Revenue</p>
                     <h2 className="text-3xl font-bold mt-2">₱{totalRevenue?.toFixed(2) || "0.00"}</h2>
                 </div>
 
-                <div className="bg-[var(--secondary)] border rounded-xl p-5">
+                <div className="bg-(--secondary) border rounded-xl p-5">
                     <p className="text-sm text-gray-500">Total Confirmed Bookings</p>
                     <h2 className="text-3xl font-bold mt-2">{totalBookings || "0"}</h2>
                 </div>
 
-                <div className="bg-[var(--secondary)] border rounded-xl p-5">
+                <div className="bg-(--secondary) border rounded-xl p-5">
                     <p className="text-sm text-gray-500">Average Booking</p>
                     <h2 className="text-3xl font-bold mt-2">₱{averageBooking?.toFixed(2) || "0.00"}</h2>
                 </div>
 
-                <div className="bg-[var(--secondary)] border rounded-xl p-5">
+                <div className="bg-(--secondary) border rounded-xl p-5">
                     <p className="text-sm text-gray-500">Best Performing Court</p>
                     <h2 className="text-2xl font-bold mt-2">{bestPerformingCourt || "-"}</h2>
                 </div>
             </div>
 
-            {/* Revenue Breakdown */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-[var(--secondary)] border rounded-xl p-5">
+                <div className="bg-(--secondary) border rounded-xl p-5">
                     <h2 className="text-lg font-semibold mb-4">
                         Revenue by Court
                     </h2>
@@ -184,14 +181,13 @@ export default function Sales() {
                     </div>
                 </div>
 
-                <div className="bg-[var(--secondary)] border rounded-xl p-5">
+                <div className="bg-(--secondary) border rounded-xl p-5">
                     <h2 className="text-lg font-semibold mb-4">
                         Peak Hours
                     </h2>
                     <div className="flex w-full justify-between ">
                         {peakHoursData.length === 0 ? (
                             <>
-                                {/* AM */}
                         <div className="space-y-3">
                             <div className="flex justify-between w-50">
                                 <span>6:00 AM</span>
@@ -254,8 +250,7 @@ export default function Sales() {
                 </div>
             </div>
 
-            {/* Recent Transactions */}
-            <div className="bg-[var(--secondary)] border rounded-xl p-5">
+            <div className="bg-(--secondary) border rounded-xl p-5">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold">
                         Recent Transactions

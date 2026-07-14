@@ -13,7 +13,7 @@ export default function AdminBookingModal({
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
-      <div className="bg-[var(--background)] w-full max-w-3xl rounded-2xl border border-gray-700 p-6 flex flex-col gap-5">
+      <div className="bg-background w-full max-w-3xl rounded-2xl border border-gray-700 p-6 flex flex-col gap-5">
 
         <div className="flex justify-between">
           <div>

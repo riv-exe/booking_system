@@ -1,4 +1,18 @@
 import "./globals.css";
+import { Space_Grotesk, Inter } from "next/font/google";
+import ThemeSetter from "./components/theme/ThemeSetter";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-display",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-body",
+});
 
 export const metadata = {
   title: "Badminton PH: Home",
@@ -7,11 +21,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className={`h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`h-full antialiased ${spaceGrotesk.variable} ${inter.variable}`}>
+      <body className="min-h-full flex flex-col">
+        <ThemeSetter />
+        {children}
+      </body>
     </html>
   );
 }

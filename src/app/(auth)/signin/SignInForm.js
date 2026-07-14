@@ -53,8 +53,8 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-      <div className="w-full max-w-md p-6 rounded-2xl bg-[var(--secondary)]">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="w-full max-w-md p-6 rounded-2xl bg-(--secondary)">
 
         <h1 className="text-2xl font-bold mb-6 text-center">
           Sign In
@@ -71,7 +71,7 @@ export default function SignInForm() {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 rounded-lg bg-black/20"
+            className="w-full p-3 rounded-lg bg-black/5"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -79,7 +79,7 @@ export default function SignInForm() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-3 rounded-lg bg-black/20"
+            className="w-full p-3 rounded-lg bg-black/5"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -87,7 +87,7 @@ export default function SignInForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[var(--primary)] text-white p-3 rounded-lg cursor-pointer hover:opacity-90 disabled:opacity-50"
+            className="w-full bg-(--primary) text-white p-3 rounded-lg cursor-pointer hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
@@ -98,12 +98,13 @@ export default function SignInForm() {
           Don’t have an account?{" "}
           <span
             onClick={() => router.push("/signup")}
-            className="text-[var(--primary)] cursor-pointer underline"
+            className="text-(--primary) cursor-pointer underline"
           >
             Sign up
           </span>
         </p>
 
+        
       </div>
     </div>
   );

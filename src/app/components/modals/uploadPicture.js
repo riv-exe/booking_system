@@ -50,7 +50,7 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
-      <div className="bg-[var(--background)] w-full max-w-3xl h-[500px] rounded-2xl border border-gray-700 flex overflow-hidden">
+      <div className="bg-background w-full max-w-3xl h-125 rounded-2xl border border-gray-700 flex overflow-hidden">
 
         <div className="w-1/2 p-5 border-r border-gray-700 flex flex-col gap-4">
 
@@ -60,7 +60,7 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
             Send payment via GCash before uploading proof
           </div>
 
-          <div className="bg-black/20 p-3 rounded-xl">
+          <div className="bg-black/5 p-3 rounded-xl">
             <p className="text-xs text-gray-400">GCash Number</p>
             <p className="text-lg font-bold">0917 123 4567</p>
           </div>
@@ -69,7 +69,7 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
             <img
               src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=GCash-09171234567"
               alt="QR"
-              className="rounded-lg border border-gray-700"
+              className="rounded-lg"
             />
           </div>
 
@@ -118,7 +118,7 @@ export default function UploadProofModal({ isOpen, setIsOpen, onUpload }) {
           <button
             onClick={uploadImage}
             disabled={!file || loading}
-            className="bg-[var(--primary)] p-3 rounded-xl font-semibold hover:opacity-90"
+            className="bg-(--primary) text-(--white) p-3 rounded-xl font-semibold hover:opacity-90"
           >
             {loading ? "Uploading..." : "Upload Proof"}
           </button>
