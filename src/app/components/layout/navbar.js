@@ -73,6 +73,13 @@ export default function Navbar() {
             </span>
 
             <button
+              onClick={() => router.push("/my-bookings")}
+              className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm border border-(--line-color) rounded-full cursor-pointer hover:border-(--foreground)/40 transition-colors"
+            >
+              My Bookings
+            </button>
+
+            <button
               onClick={async () => {
                 await fetch("/api/auth/logout", { method: "POST" });
                 setUser(null);
