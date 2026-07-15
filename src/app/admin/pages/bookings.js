@@ -61,13 +61,11 @@ export default function Bookings() {
         }
     }
     
-    //load data first
     useEffect (() => {
         loadBookings(); 
         loadCourtNames();
     }, []);
 
-    //refresh bookings if filter changes after 3ms to avoid api spam
     useEffect(() => {
         if (
             nameFilter === "" &&
@@ -130,69 +128,69 @@ export default function Bookings() {
 
     return (
         <div className="p-6">
-            <div className="flex justify-between">
-            <h1 className="text-2xl font-bold mb-6">Bookings</h1>
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold mb-4">Bookings</h1>
 
-            <div className="flex flex-wrap gap-3 mb-6">
+                <div className="flex flex-wrap items-center gap-3">
 
-                <input
-                    className="border rounded-lg px-3 py-2"
-                    placeholder="Search customer..."
-                    value={nameFilter}
-                    onChange={(e) => {
-                        setNameFilter(e.target.value);
-                        setPage(1);
-                    }}
-                />
+                    <input
+                        className="border rounded-lg px-3 py-2 flex-1 min-w-45"
+                        placeholder="Search customer..."
+                        value={nameFilter}
+                        onChange={(e) => {
+                            setNameFilter(e.target.value);
+                            setPage(1);
+                        }}
+                    />
 
-                <select
-                    className="border rounded-lg px-3 py-2"
-                    value={courtFilter}
-                    onChange={(e) => {
-                        setCourtFilter(e.target.value);
-                        setPage(1);
-                    }}
-                >
-                    <option value="all">All Courts</option>
-                    {courts.map((c) => (
-                        <option key={c.id} value={c.name}>
-                            {c.name}
-                        </option>
-                    ))}
-                </select>
+                    <select
+                        className="border rounded-lg px-3 py-2"
+                        value={courtFilter}
+                        onChange={(e) => {
+                            setCourtFilter(e.target.value);
+                            setPage(1);
+                        }}
+                    >
+                        <option value="all">All Courts</option>
+                        {courts.map((c) => (
+                            <option key={c.id} value={c.name}>
+                                {c.name}
+                            </option>
+                        ))}
+                    </select>
 
-                <input
-                    type="date"
-                    className="border rounded-lg px-3 py-2"
-                    value={dateFilter}
-                    onChange={(e) => {
-                        setDateFilter(e.target.value);
-                        setPage(1);
-                    }}
-                />
+                    <input
+                        type="date"
+                        className="border rounded-lg px-3 py-2"
+                        value={dateFilter}
+                        onChange={(e) => {
+                            setDateFilter(e.target.value);
+                            setPage(1);
+                        }}
+                    />
 
-                <select
-                    className="border rounded-lg px-3 py-2"
-                    value={statusFilter}
-                    onChange={(e) => {
-                        setStatusFilter(e.target.value);
-                        setPage(1);
-                    }}
-                >
-                    <option value="all">All Bookings</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                    <option value="rejected">Rejected</option>
-                </select>
+                    <select
+                        className="border rounded-lg px-3 py-2"
+                        value={statusFilter}
+                        onChange={(e) => {
+                            setStatusFilter(e.target.value);
+                            setPage(1);
+                        }}
+                    >
+                        <option value="all">All Bookings</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
 
-                <button
-                    onClick={clearFilters}
-                    className="bg-red-500 px-4 py-2 rounded-lg text-white"
-                >
-                    Clear
-                </button>
+                    <button
+                        onClick={clearFilters}
+                        className="bg-red-500 px-4 py-2 rounded-lg text-white"
+                    >
+                        Clear
+                    </button>
+                </div>
             </div>
-                    </div>
 
             <div className="overflow-x-auto rounded-xl border">
 
@@ -239,7 +237,7 @@ export default function Bookings() {
                                     <td className="p-2 text-center">
                                         <button
                                             onClick={() => setSelectedBooking(b)}
-                                            className="bg-(--primary) px-4 py-2 rounded-lg"
+                                            className="bg-(--primary) text-(--white) px-4 py-2 rounded-lg"
                                         >
                                             View
                                         </button>

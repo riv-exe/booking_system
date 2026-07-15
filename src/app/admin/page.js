@@ -15,7 +15,7 @@ export default function AdminLayout() {
     return (
         <div className="min-h-screen w-full overflow-x-hidden">
 
-            <div className="h-19w-full fixed top-0 left-0 z-50">
+            <div className="h-19 w-full fixed top-0 left-0 z-50">
                 <Navbar />
             </div>
 

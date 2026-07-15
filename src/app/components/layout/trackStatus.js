@@ -9,6 +9,7 @@ export default function TrackStatus() {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [courtNumber, setCourtNumber] = useState("");
+  const [courtName, setCourtName] = useState("");
   const [courtAddress, setCourtAddress] = useState("");
   const [remark, setRemark] = useState("");
   const [error, setError] = useState("");
@@ -30,6 +31,7 @@ export default function TrackStatus() {
       setStartTime(data.start_time || "");
       setEndTime(data.end_time || "");
       setCourtNumber(data.court_number || "");
+      setCourtName(data.court_name || "");
       setDate(data.date || "");
       setCourtAddress(data.address || "");
       setRemark(data.remark || "");
@@ -98,6 +100,7 @@ export default function TrackStatus() {
             setStartTime("");
             setEndTime("");
             setCourtNumber("");
+            setCourtName("");
             setCourtAddress("");
             setRemark("");
           }}
@@ -135,6 +138,11 @@ export default function TrackStatus() {
               {courtNumber !== "" && (
                 <p>
                   <strong>Court Number:</strong> {courtNumber}
+                </p>
+              )}
+              {courtName !== "" && (
+                <p>
+                  <strong>Court Name:</strong> {courtName}
                 </p>
               )}
               {courtAddress && (

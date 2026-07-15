@@ -6,7 +6,7 @@ export async function GET(req, { params }) {
     try {
         const { reference } = await params;
 
-        const result = await query("SELECT bookings.status, bookings.start_time, bookings.end_time, bookings.court_id, bookings.booking_date, bookings.remark, courts.address FROM bookings INNER JOIN courts ON bookings.court_id = courts.id WHERE bookings.reference_code = $1", [reference]);
+        const result = await query("SELECT bookings.status, bookings.start_time, bookings.end_time, bookings.court_id, bookings.booking_date, bookings.remark, courts.name, courts.address FROM bookings INNER JOIN courts ON bookings.court_id = courts.id WHERE bookings.reference_code = $1", [reference]);
 
         const booking = result.rows[0];
 
@@ -22,6 +22,7 @@ export async function GET(req, { params }) {
             start_time: booking.start_time,
             end_time: booking.end_time,
             court_number: booking.court_id,
+            court_name: booking.name,
             date: booking.booking_date,
             address: booking.address,
             remark: booking.remark,
