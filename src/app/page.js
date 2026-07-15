@@ -3,6 +3,7 @@ import Navbar from "./components/layout/navbar";
 import FeatCourts from "./components/section/featCourts";
 import TrackStatus from "./components/layout/trackStatus";
 import Footer from "./components/layout/footer";
+import HowItWorks from "./components/section/howItWorks";
 
 export default function Home() {
   return (
@@ -137,6 +138,7 @@ export default function Home() {
       </div>
 
       <FeatCourts />
+      <HowItWorks/>
       <TrackStatus />
       <Footer />
     </div>

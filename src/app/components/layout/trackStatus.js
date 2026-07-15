@@ -78,89 +78,91 @@ export default function TrackStatus() {
       : "text-gray-900";
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-4 py-10 sm:px-6">
-      <p className="text-center text-2xl font-bold sm:text-4xl">
-        Track your booking status
-      </p>
+    <div className="border-t border-(--line-color) w-full flex items-center">
+      <div className="mx-auto flex w-full max-w-2xl flex-col items-center px-4 py-10 sm:px-6">
+        <p className="text-center text-2xl font-bold sm:text-4xl">
+          Track your booking status
+        </p>
 
-      <form
-        className="mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row"
-        onSubmit={getStatus}
-      >
-        <input
-          type="text"
-          placeholder="Reference Number..."
-          className="w-full rounded-md border border-gray-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={reference}
-          onChange={(e) => {
-            setReference(e.target.value);
-            setStatus("");
-            setError("");
-            setDate("");
-            setStartTime("");
-            setEndTime("");
-            setCourtNumber("");
-            setCourtName("");
-            setCourtAddress("");
-            setRemark("");
-          }}
-        />
-        <button
-          type="submit"
-          className="w-full cursor-pointer rounded-md bg-blue-500 px-4 py-3 text-white transition duration-200 hover:bg-blue-600 sm:w-auto"
+        <form
+          className="mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row"
+          onSubmit={getStatus}
         >
-          Track
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder="Reference Number..."
+            className="w-full rounded-md border border-gray-300 px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={reference}
+            onChange={(e) => {
+              setReference(e.target.value);
+              setStatus("");
+              setError("");
+              setDate("");
+              setStartTime("");
+              setEndTime("");
+              setCourtNumber("");
+              setCourtName("");
+              setCourtAddress("");
+              setRemark("");
+            }}
+          />
+          <button
+            type="submit"
+            className="w-full cursor-pointer rounded-md bg-blue-500 px-4 py-3 text-white transition duration-200 hover:bg-blue-600 sm:w-auto"
+          >
+            Track
+          </button>
+        </form>
 
-      {(status || error) && (
-        <div className="mt-8 w-full max-w-md rounded-lg border border-gray-200 p-5 text-sm sm:text-base">
-          {status && (
-            <div className="space-y-2 wrap-break-words font-mono">
-              <p>
-                <strong>Booking Reference:</strong> {reference.toUpperCase()}
-              </p>
-              <p>
-                <strong>Status:</strong>{" "}
-                <span className={statusClass}>{status.toUpperCase()}</span>
-              </p>
-              {formattedDate && (
+        {(status || error) && (
+          <div className="mt-8 w-full max-w-md rounded-lg border border-gray-200 p-5 text-sm sm:text-base">
+            {status && (
+              <div className="space-y-2 wrap-break-words font-mono">
                 <p>
-                  <strong>Date:</strong> {formattedDate}
+                  <strong>Booking Reference:</strong> {reference.toUpperCase()}
                 </p>
-              )}
-              {startTime && endTime && (
                 <p>
-                  <strong>Time:</strong> {formatTime(startTime)} -{" "}
-                  {formatTime(endTime)}
+                  <strong>Status:</strong>{" "}
+                  <span className={statusClass}>{status.toUpperCase()}</span>
                 </p>
-              )}
-              {courtNumber !== "" && (
-                <p>
-                  <strong>Court Number:</strong> {courtNumber}
-                </p>
-              )}
-              {courtName !== "" && (
-                <p>
-                  <strong>Court Name:</strong> {courtName}
-                </p>
-              )}
-              {courtAddress && (
-                <p className="wrap-break-words">
-                  <strong>Court Address:</strong> {courtAddress}
-                </p>
-              )}
-              {remark && (
-                <p className="wrap-break-words">
-                  <strong>Remark:</strong> {remark}
-                </p>
-              )}
-            </div>
-          )}
+                {formattedDate && (
+                  <p>
+                    <strong>Date:</strong> {formattedDate}
+                  </p>
+                )}
+                {startTime && endTime && (
+                  <p>
+                    <strong>Time:</strong> {formatTime(startTime)} -{" "}
+                    {formatTime(endTime)}
+                  </p>
+                )}
+                {courtNumber !== "" && (
+                  <p>
+                    <strong>Court Number:</strong> {courtNumber}
+                  </p>
+                )}
+                {courtName !== "" && (
+                  <p>
+                    <strong>Court Name:</strong> {courtName}
+                  </p>
+                )}
+                {courtAddress && (
+                  <p className="wrap-break-words">
+                    <strong>Court Address:</strong> {courtAddress}
+                  </p>
+                )}
+                {remark && (
+                  <p className="wrap-break-words">
+                    <strong>Remark:</strong> {remark}
+                  </p>
+                )}
+              </div>
+            )}
 
-          {error && <p className="font-mono text-base">{error}</p>}
-        </div>
-      )}
+            {error && <p className="font-mono text-base">{error}</p>}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
