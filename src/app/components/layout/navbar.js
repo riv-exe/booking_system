@@ -83,20 +83,14 @@ export default function Navbar() {
         </button>
 
         <div className="hidden sm:flex items-center gap-2">
-          <ThemeToggle />
-
           {loading ? null : user ? (
             <>
-              <span className="hidden lg:inline text-sm text-(--foreground)/60">
-                Hi, {user.name}
-              </span>
 
-              <button
-                onClick={() => go("/my-bookings")}
-                className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm border border-(--line-color) rounded-full cursor-pointer hover:border-(--foreground)/40 transition-colors"
-              >
-                My Bookings
+              <button onClick={() => go("/my-bookings")} className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm border border-(--line-color) rounded-full cursor-pointer hover:border-(--foreground)/40 transition-colors">
+                <span className="text-(--foreground)/50 mr-1">{user.name}</span> · My Bookings
               </button>
+
+              <ThemeToggle />
 
               <button
                 onClick={async () => {
