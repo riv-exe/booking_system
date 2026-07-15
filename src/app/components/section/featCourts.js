@@ -4,8 +4,30 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import HomeFeatCards from "../cards/homeFeatCards";
 
+function HomeFeatCardSkeleton() {
+  return (
+    <div
+      data-card
+      className="shrink-0 bg-background border border-(--line-color) rounded-2xl w-64 overflow-hidden animate-pulse"
+    >
+      <div className="w-full h-36 bg-(--foreground)/10" />
+
+      <div className="p-4 flex flex-col gap-2">
+        <div className="h-4 w-3/4 rounded bg-(--foreground)/10" />
+        <div className="h-3 w-1/2 rounded bg-(--foreground)/10" />
+
+        <div className="mt-6 flex items-center justify-between">
+          <div className="h-4 w-16 rounded bg-(--foreground)/10" />
+          <div className="h-4 w-4 rounded-full bg-(--foreground)/10" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FeatCourts() {
   const [courts, setCourts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const scrollRef = useRef(null);
@@ -16,11 +38,14 @@ export default function FeatCourts() {
 
   async function fetchCourts() {
     try {
+      setIsLoading(true);
       const res = await fetch("/api/courts");
       const data = await res.json();
       setCourts(data.courts || []);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -47,7 +72,7 @@ export default function FeatCourts() {
       el.removeEventListener("scroll", updateScrollButtons);
       window.removeEventListener("resize", updateScrollButtons);
     };
-  }, [courts]);
+  }, [courts, isLoading]);
 
   function scroll(direction) {
     const el = scrollRef.current;
@@ -77,7 +102,7 @@ export default function FeatCourts() {
       </div>
 
       <div className="group/carousel relative mt-10">
-        {canScrollLeft && (
+        {!isLoading && canScrollLeft && (
           <button
             onClick={() => scroll("left")}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-background border border-(--line-color) rounded-full shadow-lg p-2.5 opacity-0 group-hover/carousel:opacity-100 transition-opacity cursor-pointer"
@@ -86,7 +111,7 @@ export default function FeatCourts() {
           </button>
         )}
 
-        {canScrollRight && (
+        {!isLoading && canScrollRight && (
           <button
             onClick={() => scroll("right")}
             className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-background border border-(--line-color) rounded-full shadow-lg p-2.5 opacity-0 group-hover/carousel:opacity-100 transition-opacity cursor-pointer"
@@ -104,21 +129,21 @@ export default function FeatCourts() {
           className="overflow-x-auto scrollbar-hide px-7 py-2 flex snap-x snap-mandatory scroll-smooth touch-pan-x"
         >
           <div className="flex gap-6">
-            {courts.map((court) => (
-              <div
-                key={court.id}
-                data-card
-                className="shrink-0"
-              >
-                <HomeFeatCards
-                  id={court.id}
-                  title={court.name}
-                  img={court.img_url}
-                  address={court.address}
-                  price={court.price}
-                />
-              </div>
-            ))}
+            {isLoading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <HomeFeatCardSkeleton key={i} />
+                ))
+              : courts.map((court) => (
+                  <div key={court.id} data-card className="shrink-0">
+                    <HomeFeatCards
+                      id={court.id}
+                      title={court.name}
+                      img={court.img_url}
+                      address={court.address}
+                      price={court.price}
+                    />
+                  </div>
+                ))}
           </div>
         </div>
       </div>
