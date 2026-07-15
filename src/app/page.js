@@ -130,9 +130,12 @@ export default function Home() {
             <button className="px-6 py-3 rounded-full bg-(--primary) text-(--white) font-medium cursor-pointer hover:opacity-90 transition-opacity">
               Find a court
             </button>
-            <button className="px-6 py-3 rounded-full border border-(--line-color) font-medium cursor-pointer hover:border-(--foreground)/40 transition-colors">
+            <a
+              href="#how-it-works"
+              className="px-6 py-3 rounded-full border border-(--line-color) font-medium cursor-pointer hover:border-(--foreground)/40 transition-colors"
+            >
               How it works
-            </button>
+            </a>
           </div>
         </div>
       </div>
