@@ -159,9 +159,9 @@ export default function Bookings() {
                             setPage(1);
                         }}
                     >
-                        <option value="all">All Courts</option>
+                        <option value="all" className="bg-(--secondary)">All Courts</option>
                         {courts.map((c) => (
-                            <option key={c.id} value={c.name}>
+                            <option key={c.id} value={c.name} className="bg-(--secondary)">
                                 {c.name}
                             </option>
                         ))}
@@ -185,10 +185,10 @@ export default function Bookings() {
                             setPage(1);
                         }}
                     >
-                        <option value="all">All Bookings</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="pending">Pending</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="all" className="bg-(--secondary)">All Bookings</option>
+                        <option value="confirmed" className="bg-(--secondary)">Confirmed</option>
+                        <option value="pending" className="bg-(--secondary)">Pending</option>
+                        <option value="rejected" className="bg-(--secondary)">Rejected</option>
                     </select>
 
                     <button

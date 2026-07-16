@@ -186,10 +186,10 @@ export default function EditCourtModal({
                                     setOpeningTime(e.target.value);
                                 }}
                             >
-                                <option value="">Select Time</option>
+                                <option value="" className="bg-(--secondary)">Select Time</option>
                                 {HOUR_OPTIONS.map(function (opt) {
                                     return (
-                                        <option key={opt.value} value={opt.value}>
+                                        <option key={opt.value} value={opt.value} className="bg-(--secondary)">
                                             {opt.label}
                                         </option>
                                     );
@@ -208,10 +208,10 @@ export default function EditCourtModal({
                                     setClosingTime(e.target.value);
                                 }}
                             >
-                                <option value="">Select Time</option>
+                                <option value="" className="bg-(--secondary)">Select Time</option>
                                 {HOUR_OPTIONS.map(function (opt) {
                                     return (
-                                        <option key={opt.value} value={opt.value}>
+                                        <option key={opt.value} value={opt.value} className="bg-(--secondary)">
                                             {opt.label}
                                         </option>
                                     );

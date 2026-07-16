@@ -116,10 +116,10 @@ export default function Sales() {
                         className="border border-(--border-color) rounded-lg px-3 py-2" 
                         value={filter} 
                         onChange={(e) => {setFilter(e.target.value)}}>
-                        <option value="this_month">This Month</option>
-                        <option value="this_week">This Week</option>
-                        <option value="today">Today</option>
-                        <option value="this_year">This Year</option>
+                        <option value="this_month" className="bg-(--secondary)">This Month</option>
+                        <option value="this_week" className="bg-(--secondary)">This Week</option>
+                        <option value="today" className="bg-(--secondary)">Today</option>
+                        <option value="this_year" className="bg-(--secondary)">This Year</option>
                     </select>
 
                     <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"

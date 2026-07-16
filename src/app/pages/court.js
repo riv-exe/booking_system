@@ -300,7 +300,7 @@ export default function Court({ id }) {
                                         disabled={!hours.length}
                                     >
                                         {hours.map((h) => (
-                                            <option key={h} value={h}>
+                                            <option key={h} value={h} className="bg-(--secondary)">
                                                 {formatTimeLabel(h)}
                                             </option>
                                         ))}
@@ -316,7 +316,7 @@ export default function Court({ id }) {
                                         disabled={!validEndHours.length}
                                     >
                                         {validEndHours.map((h) => (
-                                            <option key={h} value={h}>
+                                            <option key={h} value={h} className="bg-(--secondary)">
                                                 {formatTimeLabel(h)}
                                             </option>
                                         ))}
