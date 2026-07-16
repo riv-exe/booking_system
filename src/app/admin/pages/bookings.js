@@ -193,7 +193,7 @@ export default function Bookings() {
 
                     <button
                         onClick={clearFilters}
-                        className="bg-red-500 px-4 py-2 rounded-lg text-white"
+                        className="px-4 py-2.5 rounded-xl text-sm font-medium text-(--muted) border border-(--line-color) hover:text-(--foreground) hover:border-(--primary) transition"
                     >
                         Clear
                     </button>

@@ -124,7 +124,7 @@ export default function CourtManagement() {
                                 setSearch("");
                                 setStatusFilter("all");
                             }}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                            className="px-4 py-2.5 rounded-xl text-sm font-medium text-(--muted) border border-(--line-color) hover:text-(--foreground) hover:border-(--primary) transition"
                         >
                             Clear
                         </button>

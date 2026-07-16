@@ -169,9 +169,9 @@ export default function EditCourtModal({
                             setStatus(e.target.value);
                         }}
                     >
-                        <option value="">Select Status</option>
-                        <option value="available">Active</option>
-                        <option value="unavailable">Inactive</option>
+                        <option value="" className="bg-(--secondary)">Select Status</option>
+                        <option value="available" className="bg-(--secondary)">Active</option>
+                        <option value="unavailable" className="bg-(--secondary)">Inactive</option>
                     </select>
 
                     <div className="grid grid-cols-2 gap-3 mb-4">
