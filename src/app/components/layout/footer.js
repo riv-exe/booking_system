@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-(--line-color) px-6 md:px-10 py-10">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
-        {/* Brand */}
+        
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-(--shuttle)" />
@@ -20,7 +20,7 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Contact */}
+        
         <div className="flex flex-col gap-3 text-sm">
           <h3 className="font-display font-semibold text-(--foreground)/80 uppercase tracking-wide text-xs mb-1">
             For Inquiries
@@ -28,7 +28,7 @@ export default function Footer() {
 
           <div className="flex items-start gap-2 text-(--foreground)/60">
             <MapPin className="w-4 h-4 mt-0.5 text-(--primary) shrink-0" />
-            <span>Imus Drive & Smash Badminton Court (IDS Badminton Lotus)</span>
+            <span>4th Floor Lotus Mall Nueno Ave, City of Imus Cavite</span>
           </div>
 
           <div className="flex items-center gap-2 text-(--foreground)/60">

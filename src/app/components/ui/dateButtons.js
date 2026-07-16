@@ -10,7 +10,7 @@ export default function DateButtons({ time, status, remark }) {
   }
 
   if (status === "blocked") {
-    bg = "bg-red-500";
+    bg = "bg-[var(--foreground)]/25";
   }
 
   let label = time;
