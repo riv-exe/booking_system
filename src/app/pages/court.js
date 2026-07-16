@@ -1,10 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import DateButtons from "../components/ui/dateButtons";
 import BookingDetails from "../components/modals/bookingDetails";
 import BookingReceipt from "../components/modals/bookingReceipt";
+
+function hourFromTimeStr(t, isClosing = false) {
+    if (!t) return null;
+
+    const hour = parseInt(t.slice(0, 2), 10);
+
+    if (isClosing && hour === 0) {
+        return 24;
+    }
+
+    return hour;
+}
+
+function formatHour(h) {
+    return `${String(h).padStart(2, "0")}:00`;
+}
 
 export default function Court({ id }) {
     const [user, setUser] = useState(null);
@@ -14,8 +30,8 @@ export default function Court({ id }) {
         new Date().toISOString().split("T")[0]
     );
 
-    const [startTime, setStartTime] = useState("06:00");
-    const [endTime, setEndTime] = useState("07:00");
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
 
     const [slots, setSlots] = useState([]);
 
@@ -27,16 +43,42 @@ export default function Court({ id }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const hours = [
-        "06:00","07:00","08:00","09:00","10:00",
-        "11:00","12:00","13:00","14:00","15:00",
-        "16:00","17:00"
-    ];
+    const hours = useMemo(() => {
+        if (!court) return [];
 
-    const endHours = [
-        ...hours,
-        "18:00"
-    ];
+        const open = hourFromTimeStr(court.opening_time);
+        const close = hourFromTimeStr(court.closing_time, true);
+
+        if (open === null || close === null || close <= open) return [];
+
+        const arr = [];
+        for (let h = open; h < close; h++) {
+            arr.push(formatHour(h));
+        }
+        return arr;
+    }, [court]);
+
+    const endHours = useMemo(() => {
+        if (!court) return [];
+
+        const open = hourFromTimeStr(court.opening_time);
+        const close = hourFromTimeStr(court.closing_time, true);
+
+        if (open === null || close === null || close <= open) return [];
+
+        const arr = [];
+        for (let h = open + 1; h <= close; h++) {
+            arr.push(formatHour(h));
+        }
+        return arr;
+    }, [court]);
+
+    useEffect(() => {
+        if (hours.length && endHours.length) {
+            setStartTime((prev) => (prev && hours.includes(prev) ? prev : hours[0]));
+            setEndTime((prev) => (prev && endHours.includes(prev) ? prev : endHours[0]));
+        }
+    }, [hours, endHours]);
 
     async function getSlots() {
         const res = await fetch(`/api/book?court_id=${id}&date=${bookingDate}`);
@@ -93,25 +135,21 @@ export default function Court({ id }) {
     }
 
     const blockedHours = slots
-        .filter(
-            (s) =>
-                s.status === "confirmed" ||
-                s.status === "pending"
-        )
+        .filter((s) => s.status === "confirmed" || s.status === "pending")
         .map((s) => s.time);
 
     useEffect(() => {
+        if (!startTime) return;
+
         const startIndex = hours.indexOf(startTime);
+        if (startIndex === -1) return;
 
         if (endHours.indexOf(endTime) <= startIndex) {
-            setEndTime(endHours[startIndex + 1]);
+            setEndTime(endHours[startIndex + 1] ?? endHours[endHours.length - 1]);
         }
     }, [startTime]);
 
-    const validEndHours = endHours.filter((h) => {
-        return h > startTime;
-    });
-
+    const validEndHours = endHours.filter((h) => startTime && h > startTime);
 
     function hasConflict(start, end) {
         const startHour = parseInt(start.slice(0, 2));
@@ -121,7 +159,6 @@ export default function Court({ id }) {
             if (!time) return false;
 
             const bookedHour = parseInt(time.slice(0, 2));
-
             const bookedStart = bookedHour;
             const bookedEnd = bookedHour + 1;
 
@@ -130,6 +167,8 @@ export default function Court({ id }) {
     }
 
     function handleBook() {
+        if (!startTime || !endTime) return;
+
         if (hasConflict(startTime, endTime)) {
             alert("Selected time overlaps with an existing booking.");
             return;
@@ -143,31 +182,23 @@ export default function Court({ id }) {
         setBookingDetailsIsActive(true);
     }
 
-    const displayDate = new Date(bookingDate).toLocaleDateString(
-        "en-US",
-        {
-            month: "long",
-            day: "numeric",
-            year: "numeric",
-        }
-    );
+    const displayDate = new Date(bookingDate).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
 
-    const start = Number(startTime.split(":")[0]);
-    const end = Number(endTime.split(":")[0]);
+    const start = startTime ? Number(startTime.split(":")[0]) : 0;
+    const end = endTime ? Number(endTime.split(":")[0]) : 0;
 
     const hoursSelected = Math.max(0, end - start);
-
     const rate = court?.price || 0;
-
     const totalPrice = hoursSelected * rate;
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-14">
-
             <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6">
-
                 <div className="bg-(--secondary) p-6 md:p-8 rounded-2xl border border-(--line-color) flex flex-col">
-
                     <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">
                         Court Availability
                     </h2>
@@ -175,7 +206,12 @@ export default function Court({ id }) {
                     {court ? (
                         <div className="bg-background border border-(--line-color) py-4 px-5 rounded-xl flex items-center justify-between">
                             <p className="font-semibold text-lg">{court?.name}</p>
-                            <p className="text-sm opacity-60">₱{rate} / hour</p>
+                            <div className="text-right">
+                                <p className="text-sm opacity-60">₱{rate} / hour</p>
+                                <p className="text-xs opacity-40">
+                                    Open {formatTimeLabel(hours[0] || "00:00")} – {formatTimeLabel(endHours[endHours.length - 1] || "00:00")}
+                                </p>
+                            </div>
                         </div>
                     ) : (
                         <div className="bg-background border border-(--line-color) py-4 px-5 rounded-xl h-13 animate-pulse" />
@@ -215,26 +251,30 @@ export default function Court({ id }) {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 flex-1">
-                        {hours.map((hour) => (
-                            <DateButtons
-                                key={hour}
-                                time={formatTimeLabel(hour)}
-                                status={getSlotStatus(hour)}
-                            />
-                        ))}
+                        {hours.length ? (
+                            hours.map((hour) => (
+                                <DateButtons
+                                    key={hour}
+                                    time={formatTimeLabel(hour)}
+                                    status={getSlotStatus(hour)}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-sm opacity-50 col-span-full">Loading court hours…</p>
+                        )}
                     </div>
-
                 </div>
 
                 <div className="bg-(--secondary) p-6 md:p-8 rounded-2xl border border-(--line-color) flex flex-col">
-
                     <h2 className="font-display text-2xl font-bold mb-6">Book this Court</h2>
 
                     <div className="flex flex-col gap-4">
-
                         <div className="p-4 bg-background border border-(--line-color) rounded-xl">
                             <p className="text-xs opacity-50 mb-1">Standard Rate</p>
-                            <p className="text-xl font-bold">₱{rate}<span className="text-sm font-normal opacity-60"> / hour</span></p>
+                            <p className="text-xl font-bold">
+                                ₱{rate}
+                                <span className="text-sm font-normal opacity-60"> / hour</span>
+                            </p>
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -251,13 +291,13 @@ export default function Court({ id }) {
                             <label className="text-xs opacity-60">Pick a time slot</label>
 
                             <div className="flex gap-3">
-
                                 <div className="bg-background border border-(--line-color) py-2.5 px-4 rounded-xl w-full">
                                     <label className="text-[11px] opacity-50">Start</label>
                                     <select
-                                        value={startTime}
+                                        value={startTime || ""}
                                         onChange={(e) => setStartTime(e.target.value)}
                                         className="bg-transparent w-full text-sm font-medium focus:outline-none cursor-pointer mt-0.5"
+                                        disabled={!hours.length}
                                     >
                                         {hours.map((h) => (
                                             <option key={h} value={h}>
@@ -270,22 +310,20 @@ export default function Court({ id }) {
                                 <div className="bg-background border border-(--line-color) py-2.5 px-4 rounded-xl w-full">
                                     <label className="text-[11px] opacity-50">End</label>
                                     <select
-                                        value={endTime}
+                                        value={endTime || ""}
                                         onChange={(e) => setEndTime(e.target.value)}
                                         className="bg-transparent w-full text-sm font-medium focus:outline-none cursor-pointer mt-0.5"
+                                        disabled={!validEndHours.length}
                                     >
                                         {validEndHours.map((h) => (
                                             <option key={h} value={h}>
                                                 {formatTimeLabel(h)}
                                             </option>
                                         ))}
-                                        
                                     </select>
                                 </div>
-
                             </div>
                         </div>
-
                     </div>
 
                     <div className="flex-1" />
@@ -304,14 +342,13 @@ export default function Court({ id }) {
 
                         <button
                             onClick={handleBook}
-                            className="bg-(--primary) text-(--white) hover:brightness-110 transition-all p-3.5 rounded-xl font-semibold cursor-pointer"
+                            disabled={!startTime || !endTime}
+                            className="bg-(--primary) text-(--white) hover:brightness-110 transition-all p-3.5 rounded-xl font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Book Now
                         </button>
                     </div>
-
                 </div>
-
             </div>
 
             {bookingDetailsIsActive && (
@@ -344,7 +381,6 @@ export default function Court({ id }) {
                 user={userData}
                 price={totalPrice}
             />
-
         </div>
     );
 }

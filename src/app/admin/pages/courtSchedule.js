@@ -1,6 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+function hourFromTimeStr(t, isClosing = false) {
+    if (!t) return null;
+
+    const hour = parseInt(t.slice(0, 2), 10);
+
+    if (isClosing && hour === 0) {
+        return 24;
+    }
+
+    return hour;
+}
+
+function formatHourLabel(h) {
+    return `${String(h).padStart(2, "0")}:00`;
+}
 
 export default function AdminCourtSchedule() {
     const [courts, setCourts] = useState([]);
@@ -12,12 +28,6 @@ export default function AdminCourtSchedule() {
 
     const [selectedCourt, setSelectedCourt] = useState("all");
     const [searchName, setSearchName] = useState("");
-
-    const hours = [
-        "06:00","07:00","08:00","09:00","10:00",
-        "11:00","12:00","13:00","14:00","15:00",
-        "16:00","17:00"
-    ];
 
     useEffect(() => {
         async function fetchCourts() {
@@ -52,6 +62,41 @@ export default function AdminCourtSchedule() {
     const visibleCourts = courts.filter((court) =>
         selectedCourt === "all" ? true : court.id.toString() === selectedCourt
     );
+
+    const hours = useMemo(() => {
+        if (!visibleCourts.length) return [];
+
+        let minOpen = null;
+        let maxClose = null;
+
+        visibleCourts.forEach((court) => {
+            const open = hourFromTimeStr(court.opening_time);
+            const close = hourFromTimeStr(court.closing_time, true);
+
+            if (open === null || close === null) return;
+
+            if (minOpen === null || open < minOpen) minOpen = open;
+            if (maxClose === null || close > maxClose) maxClose = close;
+        });
+
+        if (minOpen === null || maxClose === null || maxClose <= minOpen) return [];
+
+        const arr = [];
+        for (let h = minOpen; h < maxClose; h++) {
+            arr.push(formatHourLabel(h));
+        }
+        return arr;
+    }, [visibleCourts]);
+
+    function isCourtOpenAt(court, hour) {
+        const open = hourFromTimeStr(court.opening_time);
+        const close = hourFromTimeStr(court.closing_time, true);
+        const h = hourFromTimeStr(hour);
+
+        if (open === null || close === null) return false;
+
+        return h >= open && h < close;
+    }
 
     const isToday = bookingDate === new Date().toISOString().split("T")[0];
     const currentHourLabel = `${new Date().getHours().toString().padStart(2, "0")}:00`;
@@ -125,19 +170,23 @@ export default function AdminCourtSchedule() {
             </div>
 
             <div className="flex items-center gap-5 mt-5 mb-3 text-xs opacity-60">
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-(--foreground)/25" />
-                            Available
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-(--shuttle) live-dot " />
-                            Pending
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-(--primary)/70" />
-                            Booked
-                        </span>
-                    </div>
+                <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-(--foreground)/25" />
+                    Available
+                </span>
+                <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-(--shuttle) live-dot " />
+                    Pending
+                </span>
+                <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-(--primary)/70" />
+                    Booked
+                </span>
+                <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-(--muted-2)/40" />
+                    Closed
+                </span>
+            </div>
 
             <div className="rounded-2xl border border-(--line-color) bg-(--secondary) overflow-hidden">
                 <div className="overflow-x-auto">
@@ -157,8 +206,17 @@ export default function AdminCourtSchedule() {
                                 <span className="text-sm font-medium text-(--foreground)">
                                     {court.name}
                                 </span>
+                                <p className="text-[10px] text-(--muted-2) mt-0.5">
+                                    {court.opening_time?.slice(0, 5)} – {court.closing_time?.slice(0, 5)}
+                                </p>
                             </div>
                         ))}
+
+                        {hours.length === 0 && (
+                            <div className="col-span-full px-4 py-8 text-center text-sm text-(--muted-2)">
+                                No courts to display.
+                            </div>
+                        )}
 
                         {hours.map((hour) => {
                             const isCurrentHour = isToday && hour === currentHourLabel;
@@ -177,7 +235,8 @@ export default function AdminCourtSchedule() {
                                     </div>
 
                                     {visibleCourts.map((court) => {
-                                        const booking = getSlot(court.id, hour);
+                                        const courtOpen = isCourtOpenAt(court, hour);
+                                        const booking = courtOpen ? getSlot(court.id, hour) : null;
                                         const isPending = booking?.status === "pending";
 
                                         const matchesName =
@@ -186,6 +245,21 @@ export default function AdminCourtSchedule() {
                                                 booking.name
                                                     .toLowerCase()
                                                     .includes(searchName.toLowerCase()));
+
+                                        if (!courtOpen) {
+                                            return (
+                                                <div
+                                                    key={`${court.id}-${hour}`}
+                                                    className="relative border-b border-r border-(--line-color) last:border-r-0 p-1.5 min-h-[60px] bg-(--muted-2)/5"
+                                                >
+                                                    <div className="h-full rounded-lg flex items-center justify-center">
+                                                        <span className="text-(--muted-2) text-[11px] opacity-50">
+                                                            Closed
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
 
                                         return (
                                             <div

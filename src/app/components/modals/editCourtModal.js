@@ -3,6 +3,23 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { getAdminInfo, addActivity } from "@/app/services/activity";
 
+function generateHourOptions() {
+    const options = [];
+
+    for (let hour = 0; hour < 24; hour++) {
+        const value = `${String(hour).padStart(2, "0")}:00`;
+        const period = hour >= 12 ? "PM" : "AM";
+        const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+        const label = `${hour12}:00 ${period}`;
+
+        options.push({ value, label });
+    }
+
+    return options;
+}
+
+const HOUR_OPTIONS = generateHourOptions();
+
 export default function EditCourtModal({
     open,
     court,
@@ -13,19 +30,23 @@ export default function EditCourtModal({
     const [address, setAddress] = useState("");
     const [price, setPrice] = useState("");
     const [status, setStatus] = useState("");
+    const [openingTime, setOpeningTime] = useState("");
+    const [closingTime, setClosingTime] = useState("");
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState("");
 
     useEffect(function () {
-        if (court) {
+        if (open && court) {
             setName(court.name);
             setAddress(court.address);
             setPrice(court.price);
             setStatus(court.is_active ? "available" : "unavailable");
+            setOpeningTime(court.opening_time ? court.opening_time.slice(0, 5) : "");
+            setClosingTime(court.closing_time ? court.closing_time.slice(0, 5) : "");
             setPreviewUrl(court.img_url);
             setImage(null);
         }
-    }, [court]);
+    }, [open, court]);
 
     if (!open || !court) return null;
 
@@ -59,6 +80,8 @@ export default function EditCourtModal({
         formData.append("address", address);
         formData.append("price", price);
         formData.append("status", status);
+        formData.append("opening_time", openingTime);
+        formData.append("closing_time", closingTime);
 
         if (image) {
             formData.append("image", image);
@@ -94,6 +117,8 @@ export default function EditCourtModal({
         setAddress("");
         setPrice("");
         setStatus("");
+        setOpeningTime("");
+        setClosingTime("");
         setImage(null);
         setPreviewUrl("");
         onClose();
@@ -148,6 +173,52 @@ export default function EditCourtModal({
                         <option value="available">Active</option>
                         <option value="unavailable">Inactive</option>
                     </select>
+
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-1">
+                                Opening Time
+                            </label>
+                            <select
+                                className="w-full p-2 border rounded"
+                                value={openingTime}
+                                onChange={function (e) {
+                                    setOpeningTime(e.target.value);
+                                }}
+                            >
+                                <option value="">Select Time</option>
+                                {HOUR_OPTIONS.map(function (opt) {
+                                    return (
+                                        <option key={opt.value} value={opt.value}>
+                                            {opt.label}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs text-gray-400 mb-1">
+                                Closing Time
+                            </label>
+                            <select
+                                className="w-full p-2 border rounded"
+                                value={closingTime}
+                                onChange={function (e) {
+                                    setClosingTime(e.target.value);
+                                }}
+                            >
+                                <option value="">Select Time</option>
+                                {HOUR_OPTIONS.map(function (opt) {
+                                    return (
+                                        <option key={opt.value} value={opt.value}>
+                                            {opt.label}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
 
                     <div className="flex justify-between">
                         <input

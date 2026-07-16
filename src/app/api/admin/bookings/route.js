@@ -10,7 +10,7 @@ export async function GET(req) {
         }
 
         const courtsResult = await query(`
-            SELECT id, name, price, is_active
+            SELECT id, name, price, is_active, opening_time, closing_time
             FROM courts
             WHERE is_active = true
             ORDER BY id ASC

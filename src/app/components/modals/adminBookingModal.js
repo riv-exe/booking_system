@@ -11,6 +11,14 @@ export default function AdminBookingModal({
 
   if (!booking) return null;
 
+  function formatTime(timeStr) {
+    const [hourStr, minuteStr] = timeStr.split(":");
+    const hour = parseInt(hourStr, 10);
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${minuteStr} ${period}`;
+  }
+
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
 
@@ -56,7 +64,9 @@ export default function AdminBookingModal({
               <div className="col-span-2">
                 <p className="text-xs text-gray-400">Schedule</p>
                 <p className="text-sm">{booking.booking_date}</p>
-                <p className="text-sm">{booking.start_time} - {booking.end_time}</p>
+                <p className="text-sm">
+                  {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                </p>
               </div>
             </div>
 

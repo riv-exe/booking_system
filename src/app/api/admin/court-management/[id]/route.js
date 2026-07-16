@@ -12,6 +12,8 @@ export async function PUT(req, { params }) {
         const address = formData.get("address");
         const price = formData.get("price");
         const status = formData.get("status");
+        const openingTime = formData.get("opening_time");
+        const closingTime = formData.get("closing_time");
         const image = formData.get("image");
 
         let imageUrl = null;
@@ -68,8 +70,10 @@ export async function PUT(req, { params }) {
                     address = $2,
                     price = $3,
                     is_active = $4,
-                    img_url = $5
-                WHERE id = $6
+                    img_url = $5,
+                    opening_time = $6,
+                    closing_time = $7
+                WHERE id = $8
                 `,
                 [
                     name,
@@ -77,6 +81,8 @@ export async function PUT(req, { params }) {
                     Number(price),
                     status === "available",
                     imageUrl,
+                    openingTime,
+                    closingTime,
                     id,
                 ]
             );
@@ -88,14 +94,18 @@ export async function PUT(req, { params }) {
                     name = $1,
                     address = $2,
                     price = $3,
-                    is_active = $4
-                WHERE id = $5
+                    is_active = $4,
+                    opening_time = $5,
+                    closing_time = $6
+                WHERE id = $7
                 `,
                 [
                     name,
                     address,
                     Number(price),
                     status === "available",
+                    openingTime,
+                    closingTime,
                     id,
                 ]
             );

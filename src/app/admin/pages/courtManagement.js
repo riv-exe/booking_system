@@ -52,6 +52,17 @@ export default function CourtManagement() {
         setShowDeleteModal(true);
     }
 
+    function formatTime(timeStr) {
+        if (!timeStr) return "";
+
+        const [hourStr, minuteStr] = timeStr.split(":");
+        const hour = parseInt(hourStr, 10);
+        const period = hour >= 12 ? "PM" : "AM";
+        const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+
+        return `${hour12}:${minuteStr} ${period}`;
+    }
+
     const filteredCourts = courts.filter(function (court) {
         const matchesSearch = court.name
             .toLowerCase()
@@ -128,6 +139,7 @@ export default function CourtManagement() {
                                 <th className="p-4 text-center">Name</th>
                                 <th className="p-4 text-center">Location</th>
                                 <th className="p-4 text-center">Price</th>
+                                <th className="p-4 text-center">Hours</th>
                                 <th className="p-4 text-center">Status</th>
                                 <th className="p-4 text-center">Action</th>
                             </tr>
@@ -137,7 +149,7 @@ export default function CourtManagement() {
                             {loading ? (
                                 <tr>
                                     <td
-                                        colSpan={6}
+                                        colSpan={7}
                                         className="text-center py-6"
                                     >
                                         Loading courts...
@@ -171,6 +183,10 @@ export default function CourtManagement() {
                                                 </td>
 
                                                 <td className="p-2 text-center align-middle">
+                                                    {formatTime(court.opening_time)} - {formatTime(court.closing_time)}
+                                                </td>
+
+                                                <td className="p-2 text-center align-middle">
                                                     {court.is_active ? "Active" : "Inactive"}
                                                 </td>
 
@@ -201,7 +217,7 @@ export default function CourtManagement() {
                                 ) : (
                                     <tr>
                                         <td
-                                            colSpan={6}
+                                            colSpan={7}
                                             className="text-center py-6"
                                         >
                                             No courts found.

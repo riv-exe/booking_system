@@ -126,6 +126,14 @@ export default function Bookings() {
         }
     }, [page, totalPages]);
 
+    function formatTime(timeStr) {
+        const [hourStr, minuteStr] = timeStr.split(":");
+        const hour = parseInt(hourStr, 10);
+        const period = hour >= 12 ? "PM" : "AM";
+        const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+        return `${hour12}:${minuteStr} ${period}`;
+    }
+
     return (
         <div className="p-6">
             <div className="mb-6">
@@ -230,7 +238,7 @@ export default function Bookings() {
                                         {b.booking_date}
                                     </td>
                                     <td className="p-2 text-center">
-                                        {b.start_time.slice(0,5)} - {b.end_time.slice(0,5)}
+                                        {formatTime(b.start_time)} - {formatTime(b.end_time)}
                                     </td>
                                     <td className="p-2 text-center capitalize">{b.status}</td>
 
