@@ -14,7 +14,7 @@ export async function POST(req) {
     const result = await query(
       `INSERT INTO users (name, email, password, contact_num)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, name, email`,
+       RETURNING id, name, email, contact_num, role`,
       [name, email, hashedPassword, contactNum]
     );
 
