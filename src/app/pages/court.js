@@ -22,13 +22,24 @@ function formatHour(h) {
     return `${String(h).padStart(2, "0")}:00`;
 }
 
+function getLocalDateStr(date = new Date()) {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split("T")[0];
+}
+
 export default function Court({ id }) {
     const [user, setUser] = useState(null);
     const [court, setCourt] = useState(null);
 
-    const [bookingDate, setBookingDate] = useState(
-        new Date().toISOString().split("T")[0]
-    );
+    // Must NOT be computed during render (which can run on the server, in a
+    // different timezone than the visitor). Computing it inside useEffect
+    // guarantees it uses the browser's actual local clock.
+    const [bookingDate, setBookingDate] = useState(null);
+
+    useEffect(() => {
+        setBookingDate(getLocalDateStr());
+    }, []);
 
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
@@ -81,6 +92,7 @@ export default function Court({ id }) {
     }, [hours, endHours]);
 
     async function getSlots() {
+        if (!bookingDate) return;
         const res = await fetch(`/api/book?court_id=${id}&date=${bookingDate}`);
         const data = await res.json();
         setSlots(data.slots || []);
@@ -92,13 +104,13 @@ export default function Court({ id }) {
             const data = await res.json();
 
             setCourt(data.courts[0]);
-            getSlots();
         }
 
         load();
     }, []);
 
     useEffect(() => {
+        if (!bookingDate) return;
         getSlots();
     }, [bookingDate]);
 
@@ -119,10 +131,10 @@ export default function Court({ id }) {
     }
 
     function changeDate(days) {
-        const date = new Date(bookingDate);
+        const date = new Date(bookingDate + "T00:00:00");
         date.setDate(date.getDate() + days);
 
-        setBookingDate(date.toISOString().split("T")[0]);
+        setBookingDate(getLocalDateStr(date));
     }
 
     function formatTimeLabel(time24) {
@@ -187,11 +199,13 @@ export default function Court({ id }) {
         setBookingDetailsIsActive(true);
     }
 
-    const displayDate = new Date(bookingDate).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+    const displayDate = bookingDate
+        ? new Date(bookingDate + "T00:00:00").toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+          })
+        : "";
 
     const start = startTime ? Number(startTime.split(":")[0]) : 0;
     const end = endTime ? Number(endTime.split(":")[0]) : 0;
@@ -199,6 +213,14 @@ export default function Court({ id }) {
     const hoursSelected = Math.max(0, end - start);
     const rate = court?.price || 0;
     const totalPrice = hoursSelected * rate;
+
+    if (bookingDate === null) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-14">
+                <p className="text-sm opacity-60">Loading court…</p>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-14">

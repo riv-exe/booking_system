@@ -22,13 +22,24 @@ function formatHourLabel(h) {
     return `${String(h).padStart(2, "0")}:00`;
 }
 
+function getLocalDateStr() {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split("T")[0];
+}
+
 export default function AdminCourtSchedule() {
+    const [today, setToday] = useState(null);
+    const [bookingDate, setBookingDate] = useState(null);
+
+    useEffect(() => {
+        const t = getLocalDateStr();
+        setToday(t);
+        setBookingDate(t);
+    }, []);
+
     const [courts, setCourts] = useState([]);
     const [bookings, setBookings] = useState({});
-
-    const [bookingDate, setBookingDate] = useState(
-        new Date().toISOString().split("T")[0]
-    );
 
     const [selectedCourt, setSelectedCourt] = useState("all");
     const [searchName, setSearchName] = useState("");
@@ -41,6 +52,7 @@ export default function AdminCourtSchedule() {
 
 
     const refreshSchedule = async () => {
+        if (!bookingDate) return;
         const res = await fetch(`/api/admin/bookings?date=${bookingDate}`);
         const data = await res.json();
         setBookings(data.bookings || {});
@@ -59,6 +71,8 @@ export default function AdminCourtSchedule() {
     }, []);
 
     useEffect(() => {
+        if (!bookingDate) return;
+
         async function fetchBookings() {
             const res = await fetch(`/api/admin/bookings?date=${bookingDate}`);
             const data = await res.json();
@@ -75,7 +89,7 @@ export default function AdminCourtSchedule() {
     function clearFilters() {
         setSelectedCourt("all");
         setSearchName("");
-        setBookingDate(new Date().toISOString().split("T")[0]);
+        setBookingDate(today);
     }
 
     const visibleCourts = courts.filter((court) =>
@@ -117,13 +131,23 @@ export default function AdminCourtSchedule() {
         return h >= open && h < close;
     }
 
-    const isToday = bookingDate === new Date().toISOString().split("T")[0];
+    const isToday = bookingDate !== null && bookingDate === today;
     const currentHourLabel = `${new Date().getHours().toString().padStart(2, "0")}:00`;
 
-    const formattedDate = new Date(bookingDate + "T00:00:00").toLocaleDateString(
-        "en-US",
-        { weekday: "long", month: "long", day: "numeric" }
-    );
+    const formattedDate = bookingDate
+        ? new Date(bookingDate + "T00:00:00").toLocaleDateString(
+              "en-US",
+              { weekday: "long", month: "long", day: "numeric" }
+          )
+        : "";
+
+    if (bookingDate === null) {
+        return (
+            <div className="p-6 md:p-8 max-w-[1400px] mx-auto">
+                <p className="text-sm text-(--muted)">Loading schedule…</p>
+            </div>
+        );
+    }
 
     return (
         <div className="p-6 md:p-8 max-w-[1400px] mx-auto">
@@ -325,7 +349,7 @@ export default function AdminCourtSchedule() {
                                         const handleCellClick = () => {
                                             if (!courtOpen) return;
 
-                                            
+
                                             if (!booking) {
                                                 setBlockInitialData({
                                                     date: bookingDate,
@@ -342,13 +366,12 @@ export default function AdminCourtSchedule() {
                                             e?.stopPropagation?.();
                                             if (!isBlocked || !booking?.booking_id) return;
 
-                                            
-                                            
+
                                             const bid = booking.booking_id;
                                             const startInt = parseInt(String(booking.start_time).slice(0, 2), 10);
                                             const endInt = parseInt(String(booking.end_time).slice(0, 2), 10);
 
-                                            
+
                                             let startHourLabel;
                                             let endHourLabel;
 
