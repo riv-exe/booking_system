@@ -33,6 +33,11 @@ export default function Court({ id }) {
         "16:00","17:00"
     ];
 
+    const endHours = [
+        ...hours,
+        "18:00"
+    ];
+
     async function getSlots() {
         const res = await fetch(`/api/book?court_id=${id}&date=${bookingDate}`);
         const data = await res.json();
@@ -43,9 +48,11 @@ export default function Court({ id }) {
         async function load() {
             const res = await fetch(`/api/courts/${id}`);
             const data = await res.json();
+
             setCourt(data.courts[0]);
             getSlots();
         }
+
         load();
     }, []);
 
@@ -57,8 +64,10 @@ export default function Court({ id }) {
         async function getUser() {
             const res = await fetch("/api/auth/me");
             const data = await res.json();
+
             setUser(data.user);
         }
+
         getUser();
     }, []);
 
@@ -70,35 +79,39 @@ export default function Court({ id }) {
     function changeDate(days) {
         const date = new Date(bookingDate);
         date.setDate(date.getDate() + days);
+
         setBookingDate(date.toISOString().split("T")[0]);
     }
 
     function formatTimeLabel(time24) {
         const [hour] = time24.split(":").map(Number);
+
         const period = hour >= 12 ? "PM" : "AM";
         const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+
         return `${hour12} ${period}`;
     }
 
     const blockedHours = slots
-        .filter(s => s.status === "confirmed" || s.status === "pending")
-        .map(s => s.time);
+        .filter(
+            (s) =>
+                s.status === "confirmed" ||
+                s.status === "pending"
+        )
+        .map((s) => s.time);
 
     useEffect(() => {
         const startIndex = hours.indexOf(startTime);
-        const endIndex = hours.indexOf(endTime);
 
-        if (endIndex <= startIndex) {
-            setEndTime(hours[startIndex + 1] || startTime);
+        if (endHours.indexOf(endTime) <= startIndex) {
+            setEndTime(endHours[startIndex + 1]);
         }
     }, [startTime]);
 
-    const startIndex = hours.indexOf(startTime);
-
-    const validEndHours = hours.filter((h, idx) => {
-        if (idx <= startIndex) return false;
-        return true;
+    const validEndHours = endHours.filter((h) => {
+        return h > startTime;
     });
+
 
     function hasConflict(start, end) {
         const startHour = parseInt(start.slice(0, 2));
@@ -130,16 +143,22 @@ export default function Court({ id }) {
         setBookingDetailsIsActive(true);
     }
 
-    const displayDate = new Date(bookingDate).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+    const displayDate = new Date(bookingDate).toLocaleDateString(
+        "en-US",
+        {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+        }
+    );
 
-    const start = parseInt(startTime.slice(0, 2));
-    const end = parseInt(endTime.slice(0, 2));
+    const start = Number(startTime.split(":")[0]);
+    const end = Number(endTime.split(":")[0]);
+
     const hoursSelected = Math.max(0, end - start);
+
     const rate = court?.price || 0;
+
     const totalPrice = hoursSelected * rate;
 
     return (
@@ -260,6 +279,7 @@ export default function Court({ id }) {
                                                 {formatTimeLabel(h)}
                                             </option>
                                         ))}
+                                        
                                     </select>
                                 </div>
 
