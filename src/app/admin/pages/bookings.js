@@ -134,7 +134,7 @@ export default function Bookings() {
                 <div className="flex flex-wrap items-center gap-3">
 
                     <input
-                        className="border rounded-lg px-3 py-2 flex-1 min-w-45"
+                        className="border border-(--border-color) rounded-lg px-3 py-2 flex-1 min-w-45"
                         placeholder="Search customer..."
                         value={nameFilter}
                         onChange={(e) => {
@@ -144,7 +144,7 @@ export default function Bookings() {
                     />
 
                     <select
-                        className="border rounded-lg px-3 py-2"
+                        className="border border-(--border-color) rounded-lg px-3 py-2"
                         value={courtFilter}
                         onChange={(e) => {
                             setCourtFilter(e.target.value);
@@ -161,7 +161,7 @@ export default function Bookings() {
 
                     <input
                         type="date"
-                        className="border rounded-lg px-3 py-2"
+                        className="border border-(--border-color) rounded-lg px-3 py-2"
                         value={dateFilter}
                         onChange={(e) => {
                             setDateFilter(e.target.value);
@@ -170,7 +170,7 @@ export default function Bookings() {
                     />
 
                     <select
-                        className="border rounded-lg px-3 py-2"
+                        className="border border-(--border-color) rounded-lg px-3 py-2"
                         value={statusFilter}
                         onChange={(e) => {
                             setStatusFilter(e.target.value);
@@ -192,7 +192,7 @@ export default function Bookings() {
                 </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border">
+            <div className="overflow-x-auto rounded-xl border border-(--border-color)">
 
                 <table className="w-full">
 
@@ -222,7 +222,7 @@ export default function Bookings() {
                                 </tr>
                             ) : (
                             bookings.map((b) => (
-                                <tr key={b.id} className="border-t">
+                                <tr key={b.id} className="border-t border-(--border-color)">
 
                                     <td className="p-2 text-center uppercase">{b.booker_name}</td>
                                     <td className="p-2 text-center">{b.court_name}</td>
@@ -256,7 +256,7 @@ export default function Bookings() {
                 <button
                     onClick={() => setPage((prev) => prev - 1)}
                     disabled={page === 1}
-                    className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                    className="px-4 py-2 border border-(--border-color) rounded-lg disabled:opacity-50"
                 >
                     Previous
                 </button>
@@ -274,7 +274,7 @@ export default function Bookings() {
                 <button
                     onClick={() => setPage((prev) => prev + 1)}
                     disabled={page === totalPages}
-                    className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                    className="px-4 py-2 border border-(--border-color) rounded-lg disabled:opacity-50"
                 >
                     Next
                 </button>

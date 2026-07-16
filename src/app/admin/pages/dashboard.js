@@ -45,22 +45,22 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-4 gap-4">
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Total Bookings</p>
                     <p className="text-2xl font-bold">{stats.totalBookings ?? 0}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Today&apos;s Bookings</p>
                     <p className="text-2xl font-bold">{stats.todayBookings ?? 0}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Active Courts</p>
                     <p className="text-2xl font-bold">{stats.totalCourts ?? 0}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Monthly Revenue</p>
                     <p className="text-2xl font-bold">₱{stats.totalRevenue ?? 0}</p>
                 </div>
@@ -69,22 +69,22 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-4 gap-4">
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Pending Bookings</p>
                     <p className="text-2xl font-bold">{stats.pendingBookings ?? 0}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Upcoming Bookings</p>
                     <p className="text-2xl font-bold">{stats.upcomingBookings ?? 0}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Monthly Confirmed Bookings</p>
                     <p className="text-2xl font-bold">{stats.confirmedBookings ?? 0}</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-(--secondary) border">
+                <div className="p-4 rounded-xl bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm opacity-70">Monthly New Members</p>
                     <p className="text-2xl font-bold">{stats.newMembers ?? 0}</p>
                 </div>
@@ -92,8 +92,8 @@ export default function Dashboard() {
 
             </div>
 
-            <div className="bg-(--secondary) border rounded-xl p-4">
-                <h2 className="text-lg font-semibold pb-2 border-b mb-2">
+            <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-4">
+                <h2 className="text-lg font-semibold pb-2 border-b border-(--border-color) mb-2">
                         Recent Activities
                     </h2>
                 {loading ? (

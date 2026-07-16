@@ -74,23 +74,36 @@ export default function Navbar() {
             src="/logos/badminton-icon.png"
             width={32}
             height={32}
-            className="sm:w-10 sm:h-10"
           />
 
-          <span className="font-display text-lg sm:text-2xl font-bold tracking-tight">
-            Badminton<span className="text-(--primary)">PH</span>
+          <span className="font-display text-lg sm:text-2xl font-bold tracking-tight whitespace-nowrap">
+            <span>
+              Imus Drive <span className="text-(--primary)">&</span> Smash
+            </span>
           </span>
         </button>
 
         <div className="hidden sm:flex items-center gap-2">
+          <ThemeToggle />
+          
           {loading ? null : user ? (
             <>
 
-              <button onClick={() => go("/my-bookings")} className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm border border-(--line-color) rounded-full cursor-pointer hover:border-(--foreground)/40 transition-colors">
-                <span className="text-(--foreground)/50 mr-1">{user.name}</span> · My Bookings
-              </button>
-
-              <ThemeToggle />
+              {user.role === "member" ? (
+                <button
+                  onClick={() => go("/my-bookings")}
+                  className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm border border-(--line-color) rounded-full cursor-pointer hover:border-(--foreground)/40 transition-colors"
+                >
+                  <span className="text-(--foreground)/50 mr-1">{user.name}</span> · My Bookings
+                </button>
+              ) : (
+                <p
+                  className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm border border-(--line-color) rounded-full"
+                >
+                  <span className="text-(--foreground)/50 mr-1">{user.name}</span>
+                </p>
+              )}
+              
 
               <button
                 onClick={async () => {

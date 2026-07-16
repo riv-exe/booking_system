@@ -49,124 +49,189 @@ export default function AdminCourtSchedule() {
         setBookingDate(new Date().toISOString().split("T")[0]);
     }
 
+    const visibleCourts = courts.filter((court) =>
+        selectedCourt === "all" ? true : court.id.toString() === selectedCourt
+    );
+
+    const isToday = bookingDate === new Date().toISOString().split("T")[0];
+    const currentHourLabel = `${new Date().getHours().toString().padStart(2, "0")}:00`;
+
+    const formattedDate = new Date(bookingDate + "T00:00:00").toLocaleDateString(
+        "en-US",
+        { weekday: "long", month: "long", day: "numeric" }
+    );
+
     return (
-        <div className="p-6 overflow-x-hidden">
+        <div className="p-6 md:p-8 max-w-[1400px] mx-auto">
 
-            <div className="flex flex-wrap justify-between items-center mb-6 gap-4 w-full">
+            <div className="flex flex-wrap justify-between items-end gap-4 mb-6">
+                <div>
+                    <h1 className="text-2xl font-semibold tracking-tight text-(--foreground)">
+                        Court schedule
+                    </h1>
+                    <p className="text-sm text-(--muted) mt-1">
+                        {formattedDate}{isToday && (
+                            <span className="ml-2 inline-flex items-center gap-1.5 text-(--primary)">
+                                <span className="w-1.5 h-1.5 rounded-full bg-(--primary) live-dot" />
+                                Today
+                            </span>
+                        )}
+                    </p>
+                </div>
 
-                <h1 className="text-2xl font-bold whitespace-nowrap">
-                    Court Schedule
-                </h1>
+                <div className="flex flex-wrap gap-2.5 items-center">
 
-                <div className="flex flex-wrap gap-3 items-center">
+                    <div className="relative">
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-(--muted-2)" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                        </svg>
+                        <input
+                            type="text"
+                            placeholder="Search customer"
+                            value={searchName}
+                            onChange={(e) => setSearchName(e.target.value)}
+                            className="bg-(--secondary) border border-(--line-color) rounded-xl pl-9 pr-3 py-2.5 text-sm text-(--foreground) placeholder:text-(--muted-2) w-48 focus:outline-none focus:ring-2 focus:ring-(--primary)/30 focus:border-(--primary) transition"
+                        />
+                    </div>
 
                     <select
                         value={selectedCourt}
                         onChange={(e) => setSelectedCourt(e.target.value)}
-                        className="border px-3 py-2 rounded-lg w-40"
+                        className="bg-(--secondary) border border-(--line-color) rounded-xl px-3 py-2.5 text-sm text-(--foreground) w-40 focus:outline-none focus:ring-2 focus:ring-(--primary)/30 focus:border-(--primary) transition cursor-pointer"
                     >
-                        <option value="all">All Courts</option>
-
+                        <option value="all">All courts</option>
                         {courts.map((court) => (
-                            <option key={court.id} value={court.id} className="bg-background border border-gray-700 py-2 px-5 rounded-2xl w-full">
+                            <option key={court.id} value={court.id}>
                                 {court.name}
                             </option>
                         ))}
                     </select>
 
                     <input
-                        type="text"
-                        placeholder="Search customer..."
-                        value={searchName}
-                        onChange={(e) => setSearchName(e.target.value)}
-                        className="border px-3 py-2 rounded-lg w-48"
-                    />
-
-                    <input
                         type="date"
                         value={bookingDate}
                         onChange={(e) => setBookingDate(e.target.value)}
-                        className="border px-3 py-2 rounded-lg w-44"
+                        className="bg-(--secondary) border border-(--line-color) rounded-xl px-3 py-2.5 text-sm text-(--foreground) w-40 focus:outline-none focus:ring-2 focus:ring-(--primary)/30 focus:border-(--primary) transition"
                     />
 
                     <button
                         onClick={clearFilters}
-                        className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                        className="px-4 py-2.5 rounded-xl text-sm font-medium text-(--muted) border border-(--line-color) hover:text-(--foreground) hover:border-(--primary) transition"
                     >
-                        Clear
+                        Reset
                     </button>
 
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="flex items-center gap-5 mt-5 mb-3 text-xs opacity-60">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-(--foreground)/25" />
+                            Available
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-(--shuttle) live-dot " />
+                            Pending
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-(--primary)/70" />
+                            Booked
+                        </span>
+                    </div>
 
-                {courts
-                    .filter((court) =>
-                        selectedCourt === "all"
-                            ? true
-                            : court.id.toString() === selectedCourt
-                    )
-                    .map((court) => (
-                        <div
-                            key={court.id}
-                            className="border border-gray-500 rounded-2xl p-4 bg-(--secondary)"
-                        >
+            <div className="rounded-2xl border border-(--line-color) bg-(--secondary) overflow-hidden">
+                <div className="overflow-x-auto">
+                    <div
+                        className="grid min-w-[640px]"
+                        style={{
+                            gridTemplateColumns: `84px repeat(${Math.max(visibleCourts.length, 1)}, minmax(150px, 1fr))`
+                        }}
+                    >
+                        <div className="sticky top-0 left-0 z-20 bg-(--secondary) border-b border-r border-(--line-color)" />
 
-                            <h2 className="font-bold text-lg mb-3">
-                                {court.name}
-                            </h2>
+                        {visibleCourts.map((court) => (
+                            <div
+                                key={court.id}
+                                className="sticky top-0 z-10 bg-(--secondary) border-b border-r border-(--line-color) last:border-r-0 px-4 py-3.5 text-center"
+                            >
+                                <span className="text-sm font-medium text-(--foreground)">
+                                    {court.name}
+                                </span>
+                            </div>
+                        ))}
 
-                            <div className="grid grid-cols-1 gap-2">
+                        {hours.map((hour) => {
+                            const isCurrentHour = isToday && hour === currentHourLabel;
 
-                                {hours.map((hour) => {
+                            return (
+                                <div key={hour} className="contents">
 
-                                    const booking = getSlot(court.id, hour);
+                                    <div
+                                        className={`sticky left-0 z-10 border-b border-r border-(--line-color) px-3 py-3 text-xs flex items-center justify-end ${
+                                            isCurrentHour
+                                                ? "bg-(--accent-bg) text-(--primary) font-medium"
+                                                : "bg-(--secondary) text-(--muted-2)"
+                                        }`}
+                                    >
+                                        {hour}
+                                    </div>
 
-                                    const matchesName =
-                                        !searchName ||
-                                        (booking &&
-                                            booking.name
-                                                .toLowerCase()
-                                                .includes(searchName.toLowerCase()));
+                                    {visibleCourts.map((court) => {
+                                        const booking = getSlot(court.id, hour);
+                                        const isPending = booking?.status === "pending";
 
-                                    if (!matchesName) return null;
+                                        const matchesName =
+                                            !searchName ||
+                                            (booking &&
+                                                booking.name
+                                                    .toLowerCase()
+                                                    .includes(searchName.toLowerCase()));
 
-                                    return (
-                                        <div
-                                            key={hour}
-                                            className="flex justify-between px-4 py-2 rounded-lg bg-background border border-gray-700 "
-                                        >
-                                            <span>{hour}</span>
-
-                                            <span
-                                                className={
-                                                    booking
-                                                        ? "text-red-400"
-                                                        : "text-green-400"
-                                                }
+                                        return (
+                                            <div
+                                                key={`${court.id}-${hour}`}
+                                                className={`relative border-b border-r border-(--line-color) last:border-r-0 p-1.5 min-h-[60px] bg-(--background) transition-opacity ${
+                                                    isCurrentHour ? "bg-(--accent-bg)" : ""
+                                                } ${searchName && !matchesName ? "opacity-25" : ""}`}
                                             >
                                                 {booking ? (
-                                                    <div className="flex flex-col">
-                                                        <span className="font-semibold uppercase">
-                                                            {booking.name}
-                                                        </span>
-                                                        <span className="text-xs opacity-70">
-                                                            {booking.contact}
+                                                    isPending ? (
+                                                        <div className="h-full rounded-lg bg-(--pending-bg) text-(--shuttle) px-2.5 py-1.5 flex flex-col items-center justify-center gap-0.5 hover:border-(--shuttle) transition cursor-default">
+                                                            <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-(--pending-text) font-medium">
+                                                                Pending
+                                                            </span>
+                                                            <span className="font-medium text-(--pending-text) text-xs leading-tight truncate">
+                                                                {booking.name}
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="h-full rounded-lg bg-(--danger-bg) text-(--primary) px-2.5 py-1.5 flex flex-col items-center justify-center gap-0.5 hover:border-(--danger) transition cursor-default">
+                                                            <span className="font-medium text-xs leading-tight truncate">
+                                                                {booking.name}
+                                                            </span>
+                                                            <span className="text-[11px] truncate">
+                                                                {booking.contact}
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                ) : (
+                                                    <div className="h-full rounded-lg flex items-center justify-center hover:bg-(--success-bg) transition cursor-default group">
+                                                        <span className="text-(--success-text) text-[11px] opacity-70 group-hover:opacity-100 transition">
+                                                            Open
                                                         </span>
                                                     </div>
-                                                ) : (
-                                                    "Available"
                                                 )}
-                                            </span>
-                                        </div>
-                                    );
-                                })}
+                                            </div>
+                                        );
+                                    })}
 
-                            </div>
-                        </div>
-                    ))}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
+
         </div>
     );
 }

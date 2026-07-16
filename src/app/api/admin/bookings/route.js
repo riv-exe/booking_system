@@ -25,14 +25,15 @@ export async function GET(req) {
                 b.booking_date,
                 b.start_time,
                 b.end_time,
+                b.status,
                 bo.name AS booker_name,
                 bo.email,
                 bo.contact_no
             FROM bookings b
             JOIN bookers bo ON bo.id = b.booker_id
             WHERE b.booking_date = $1
-            AND b.status = $2
-        `, [date, "confirmed"]);
+            AND b.status = ANY($2)
+        `, [date, ["confirmed", "pending"]]);
 
         const bookings = bookingsResult.rows;
 
@@ -49,13 +50,19 @@ export async function GET(req) {
             for (let h = startHour; h < endHour; h++) {
                 const hour = `${String(h).padStart(2, "0")}:00`;
 
+                const existing = schedule[b.court_id][hour];
+                if (existing && existing.status === "confirmed" && b.status === "pending") {
+                    return;
+                }
+
                 schedule[b.court_id][hour] = {
                     booking_id: b.id,
                     name: b.booker_name,
                     email: b.email,
                     contact: b.contact_no,
                     start_time: b.start_time,
-                    end_time: b.end_time
+                    end_time: b.end_time,
+                    status: b.status
                 };
             }
         });

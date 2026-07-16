@@ -98,7 +98,6 @@ export default function Home() {
 
         <div className="flex flex-col items-center text-center gap-6 py-16 max-w-2xl">
           <div className="inline-flex items-center gap-2 w-fit px-3 py-1 rounded-full border border-(--line-color) text-xs text-(--foreground)/70">
-            <span className="live-dot w-1.5 h-1.5 rounded-full bg-(--shuttle]" />
             Live court booking · Philippines
           </div>
 

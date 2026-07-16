@@ -113,7 +113,7 @@ export default function Sales() {
 
                 <div className="flex gap-2">
                     <select 
-                        className="border rounded-lg px-3 py-2" 
+                        className="border border-(--border-color) rounded-lg px-3 py-2" 
                         value={filter} 
                         onChange={(e) => {setFilter(e.target.value)}}>
                         <option value="this_month">This Month</option>
@@ -135,29 +135,29 @@ export default function Sales() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 ">
-                <div className="rounded-xl p-5 bg-(--secondary) border">
+                <div className="rounded-xl p-5 bg-(--secondary) border border-(--border-color)">
                     <p className="text-sm text-gray-500">Total Revenue</p>
                     <h2 className="text-3xl font-bold mt-2">₱{totalRevenue?.toFixed(2) || "0.00"}</h2>
                 </div>
 
-                <div className="bg-(--secondary) border rounded-xl p-5">
+                <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-5">
                     <p className="text-sm text-gray-500">Total Confirmed Bookings</p>
                     <h2 className="text-3xl font-bold mt-2">{totalBookings || "0"}</h2>
                 </div>
 
-                <div className="bg-(--secondary) border rounded-xl p-5">
+                <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-5">
                     <p className="text-sm text-gray-500">Average Booking</p>
                     <h2 className="text-3xl font-bold mt-2">₱{averageBooking?.toFixed(2) || "0.00"}</h2>
                 </div>
 
-                <div className="bg-(--secondary) border rounded-xl p-5">
+                <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-5">
                     <p className="text-sm text-gray-500">Best Performing Court</p>
                     <h2 className="text-2xl font-bold mt-2">{bestPerformingCourt || "-"}</h2>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-(--secondary) border rounded-xl p-5">
+                <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-5">
                     <h2 className="text-lg font-semibold mb-4">
                         Revenue by Court
                     </h2>
@@ -181,7 +181,7 @@ export default function Sales() {
                     </div>
                 </div>
 
-                <div className="bg-(--secondary) border rounded-xl p-5">
+                <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-5">
                     <h2 className="text-lg font-semibold mb-4">
                         Peak Hours
                     </h2>
@@ -250,7 +250,7 @@ export default function Sales() {
                 </div>
             </div>
 
-            <div className="bg-(--secondary) border rounded-xl p-5">
+            <div className="bg-(--secondary) border border-(--border-color) rounded-xl p-5">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold">
                         Recent Transactions
@@ -261,7 +261,7 @@ export default function Sales() {
                         placeholder="Search customer..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="border rounded-lg px-3 py-2"
+                        className="border border-(--border-color) rounded-lg px-3 py-2"
                     />
                 </div>
 
@@ -293,7 +293,7 @@ export default function Sales() {
                                     filteredTransactions.map((transaction) => (
                                         <tr
                                             key={transaction.reference_code}
-                                            className="border-t"
+                                            className="border-t border-(--border-color)"
                                         >
                                             <td className="text-center">
                                                 {new Date(transaction.created_at).toLocaleString("en-US", {

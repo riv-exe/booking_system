@@ -6,6 +6,7 @@
   --primary: #0a65fd;
   --secondary: #242526;
   --line-color: #3a3b3c;
+  --border-color: #3a3b3c;
   --shuttle: #ffc72c;
   --white: white;
 }
@@ -16,6 +17,7 @@ html[data-theme="light"] {
   --primary: #0a65fd;
   --secondary: #f0f2f5;
   --line-color: #e4e6eb;
+  --border-color: #d3d4d8;
   --shuttle: #ffc72c;
   --white: white;
 }

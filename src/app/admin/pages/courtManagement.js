@@ -93,11 +93,11 @@ export default function CourtManagement() {
                             onChange={function (e) {
                                 setSearch(e.target.value);
                             }}
-                            className="border px-3 py-2 rounded-lg"
+                            className="border border-(--border-color) px-3 py-2 rounded-lg"
                         />
 
                         <select
-                            className="border rounded-lg px-3 py-2"
+                            className="border border-(--border-color) rounded-lg px-3 py-2"
                             value={statusFilter}
                             onChange={function (e) {
                                 setStatusFilter(e.target.value);
@@ -120,7 +120,7 @@ export default function CourtManagement() {
                     </div>
                 </div>
 
-                <div className="my-6 overflow-y-auto border rounded-xl">
+                <div className="my-6 overflow-y-auto border border-(--border-color) rounded-xl">
                     <table className="w-full">
                         <thead className="bg-(--secondary)">
                             <tr>
@@ -147,7 +147,7 @@ export default function CourtManagement() {
                                 filteredCourts.length > 0 ? (
                                     filteredCourts.map(function (court) {
                                         return (
-                                            <tr key={court.id} className="border-t">
+                                            <tr key={court.id} className="border-t border-(--border-color)">
                                                 <td className="p-2 text-center align-middle">
                                                     <Image
                                                         src={court.img_url}
