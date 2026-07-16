@@ -19,21 +19,23 @@ export async function GET(req) {
         const courts = courtsResult.rows;
 
         const bookingsResult = await query(`
-            SELECT 
+           SELECT 
                 b.id,
                 b.court_id,
                 b.booking_date,
                 b.start_time,
                 b.end_time,
                 b.status,
+                b.remark,
                 bo.name AS booker_name,
                 bo.email,
                 bo.contact_no
             FROM bookings b
-            JOIN bookers bo ON bo.id = b.booker_id
+            LEFT JOIN bookers bo ON bo.id = b.booker_id
             WHERE b.booking_date = $1
             AND b.status = ANY($2)
-        `, [date, ["confirmed", "pending"]]);
+        `, [date, ["confirmed", "pending", "blocked"]]);
+
 
         const bookings = bookingsResult.rows;
 
@@ -44,8 +46,9 @@ export async function GET(req) {
                 schedule[b.court_id] = {};
             }
 
-            const startHour = parseInt(b.start_time.slice(0, 2));
-            const endHour = parseInt(b.end_time.slice(0, 2));
+                const startHour = parseInt(String(b.start_time).slice(0, 2));
+            const endHour = parseInt(String(b.end_time).slice(0, 2));
+
 
             for (let h = startHour; h < endHour; h++) {
                 const hour = `${String(h).padStart(2, "0")}:00`;
@@ -57,12 +60,13 @@ export async function GET(req) {
 
                 schedule[b.court_id][hour] = {
                     booking_id: b.id,
-                    name: b.booker_name,
-                    email: b.email,
-                    contact: b.contact_no,
+                    name: b.status === "blocked" ? (b.remark || "blocked") : b.booker_name,
+                    email: b.status === "blocked" ? null : b.email,
+                    contact: b.status === "blocked" ? null : b.contact_no,
                     start_time: b.start_time,
                     end_time: b.end_time,
-                    status: b.status
+                    status: b.status,
+                    reason: b.remark
                 };
             }
         });

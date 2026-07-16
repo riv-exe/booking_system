@@ -1,4 +1,4 @@
-export default function DateButtons({ time, status }) {
+export default function DateButtons({ time, status, remark }) {
   let bg = "bg-[var(--primary)]/75";
 
   if (status === "pending") {
@@ -9,11 +9,20 @@ export default function DateButtons({ time, status }) {
     bg = "bg-[var(--foreground)]/25";
   }
 
+  if (status === "blocked") {
+    bg = "bg-red-500";
+  }
+
+  let label = time;
+  if (status === "confirmed") label = "Booked";
+  if (status === "pending") label = time;
+  if (status === "blocked") label = remark || "Blocked";
+
   return (
     <div
       className={`${bg} p-4 rounded-xl text-white text-center flex justify-center items-center`}
     >
-      {status === "confirmed" ? "Booked" : time}
+      {label}
     </div>
   );
 }

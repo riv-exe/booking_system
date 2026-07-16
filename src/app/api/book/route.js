@@ -122,7 +122,7 @@ export async function GET(req) {
     try {
         const result = await query(
             `
-            SELECT start_time, end_time, status
+            SELECT start_time, end_time, status, remark
             FROM bookings
             WHERE court_id = $1
             AND booking_date = $2
@@ -139,7 +139,9 @@ export async function GET(req) {
             for (let h = start; h < end; h++) {
                 slots.push({
                     time: `${String(h).padStart(2, "0")}:00`,
-                    status: booking.status
+                    status: booking.status,
+                    remark: booking.remark,
+                    name: booking.remark,
                 });
             }
         });

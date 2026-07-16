@@ -135,7 +135,12 @@ export default function Court({ id }) {
     }
 
     const blockedHours = slots
-        .filter((s) => s.status === "confirmed" || s.status === "pending")
+        .filter(
+            (s) =>
+                s.status === "confirmed" ||
+                s.status === "pending" ||
+                s.status === "blocked"
+        )
         .map((s) => s.time);
 
     useEffect(() => {
@@ -257,6 +262,7 @@ export default function Court({ id }) {
                                     key={hour}
                                     time={formatTimeLabel(hour)}
                                     status={getSlotStatus(hour)}
+                                    remark={slots.find((s) => s.time === hour)?.remark}
                                 />
                             ))
                         ) : (

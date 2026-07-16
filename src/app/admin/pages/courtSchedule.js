@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import AddCourtBlockModal from "@/app/components/modals/addCourtBlockModal";
+import DeleteCourtBlockModal from "@/app/components/modals/deleteCourtBlockModal";
+
+
 function hourFromTimeStr(t, isClosing = false) {
     if (!t) return null;
 
@@ -28,6 +32,21 @@ export default function AdminCourtSchedule() {
 
     const [selectedCourt, setSelectedCourt] = useState("all");
     const [searchName, setSearchName] = useState("");
+
+    const [blockModalOpen, setBlockModalOpen] = useState(false);
+    const [blockInitialData, setBlockInitialData] = useState(null);
+
+    const [deleteBlockModalOpen, setDeleteBlockModalOpen] = useState(false);
+    const [deleteBlockInitialData, setDeleteBlockInitialData] = useState(null);
+
+
+    const refreshSchedule = async () => {
+        const res = await fetch(`/api/admin/bookings?date=${bookingDate}`);
+        const data = await res.json();
+        setBookings(data.bookings || {});
+    };
+
+    const [blockCreatedTick, setBlockCreatedTick] = useState(0);
 
     useEffect(() => {
         async function fetchCourts() {
@@ -190,6 +209,47 @@ export default function AdminCourtSchedule() {
 
             <div className="rounded-2xl border border-(--line-color) bg-(--secondary) overflow-hidden">
                 <div className="overflow-x-auto">
+
+                    <AddCourtBlockModal
+                        open={blockModalOpen}
+                        initialData={blockInitialData}
+                        onClose={() => setBlockModalOpen(false)}
+                        onSuccess={() => {
+                            setBlockModalOpen(false);
+                            setBlockCreatedTick((t) => t + 1);
+                            refreshSchedule();
+                        }}
+                    />
+
+                    <DeleteCourtBlockModal
+                        open={deleteBlockModalOpen}
+                        initialData={deleteBlockInitialData}
+                        onClose={() => setDeleteBlockModalOpen(false)}
+                        onConfirm={async () => {
+                            try {
+                                const bid = deleteBlockInitialData?.bookingId;
+                                if (!bid) return;
+
+                                const res = await fetch("/api/admin/bookings/block", {
+                                    method: "DELETE",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ booking_id: bid }),
+                                });
+
+                                const data = await res.json().catch(() => ({}));
+                                if (!res.ok) {
+                                    alert(data?.error || "Failed to remove block");
+                                    return;
+                                }
+
+                                setDeleteBlockModalOpen(false);
+                                refreshSchedule();
+                            } catch {
+                                alert("Failed to remove block");
+                            }
+                        }}
+                    />
+
                     <div
                         className="grid min-w-[640px]"
                         style={{
@@ -238,6 +298,7 @@ export default function AdminCourtSchedule() {
                                         const courtOpen = isCourtOpenAt(court, hour);
                                         const booking = courtOpen ? getSlot(court.id, hour) : null;
                                         const isPending = booking?.status === "pending";
+                                        const isBlocked = booking?.status === "blocked";
 
                                         const matchesName =
                                             !searchName ||
@@ -261,15 +322,97 @@ export default function AdminCourtSchedule() {
                                             );
                                         }
 
+                                        const handleCellClick = () => {
+                                            if (!courtOpen) return;
+
+                                            // Only open modal when the slot is free
+                                            if (!booking) {
+                                                setBlockInitialData({
+                                                    date: bookingDate,
+                                                    courtId: court.id,
+                                                    startHourLabel: hour,
+                                                    endHourLabel: hour,
+                                                    reasonPreset: "maintenance",
+                                                });
+                                                setBlockModalOpen(true);
+                                            }
+                                        };
+
+                                        const handleBlockedCellClick = (e) => {
+                                            e?.stopPropagation?.();
+                                            if (!isBlocked || !booking?.booking_id) return;
+
+                                            // Prefer the canonical start/end times coming from the schedule table data.
+                                            // `bookings` items already include `start_time` / `end_time`.
+                                            const bid = booking.booking_id;
+                                            const startInt = parseInt(String(booking.start_time).slice(0, 2), 10);
+                                            const endInt = parseInt(String(booking.end_time).slice(0, 2), 10);
+
+                                            // Fallback to contiguous scan if start/end are missing for some reason.
+                                            let startHourLabel;
+                                            let endHourLabel;
+
+                                            if (Number.isFinite(startInt) && Number.isFinite(endInt)) {
+                                                startHourLabel = `${String(startInt).padStart(2, "0")}:00`;
+                                                endHourLabel = `${String(endInt).padStart(2, "0")}:00`;
+                                            } else {
+                                                const courtBookings = bookings?.[court.id] || {};
+                                                const clickedHourInt = parseInt(String(hour).slice(0, 2), 10);
+
+                                                let startIntScan = clickedHourInt;
+                                                while (startIntScan > 0) {
+                                                    const prev = courtBookings?.[startIntScan - 1];
+                                                    if (!prev || prev.status !== "blocked" || prev.booking_id !== bid) break;
+                                                    startIntScan -= 1;
+                                                }
+
+                                                let endIntExclusive = clickedHourInt + 1;
+                                                while (true) {
+                                                    const next = courtBookings?.[endIntExclusive];
+                                                    if (!next || next.status !== "blocked" || next.booking_id !== bid) break;
+                                                    endIntExclusive += 1;
+                                                }
+
+                                                startHourLabel = `${String(startIntScan).padStart(2, "0")}:00`;
+                                                endHourLabel = `${String(endIntExclusive).padStart(2, "0")}:00`;
+                                            }
+
+                                            setDeleteBlockInitialData({
+                                                bookingId: bid,
+                                                date: bookingDate,
+                                                courtName: court.name,
+                                                startHourLabel,
+                                                endHourLabel,
+                                                reasonText: booking.reason || booking.name || "blocked",
+                                            });
+                                            setDeleteBlockModalOpen(true);
+                                        };
+
+
                                         return (
                                             <div
                                                 key={`${court.id}-${hour}`}
+                                                onClick={isBlocked ? handleBlockedCellClick : handleCellClick}
                                                 className={`relative border-b border-r border-(--line-color) last:border-r-0 p-1.5 min-h-[60px] bg-(--background) transition-opacity ${
                                                     isCurrentHour ? "bg-(--accent-bg)" : ""
-                                                } ${searchName && !matchesName ? "opacity-25" : ""}`}
+                                                } ${searchName && !matchesName ? "opacity-25" : ""} ${
+                                                    !booking || isBlocked
+                                                        ? "cursor-pointer hover:bg-(--success-bg)"
+                                                        : "cursor-default"
+                                                }`}
                                             >
+
                                                 {booking ? (
-                                                    isPending ? (
+                                                    isBlocked ? (
+                                                        <div className="h-full rounded-lg text-red-400 px-2.5 py-1.5 flex flex-col items-center justify-center gap-0.5 hover:border-(--line-color) transition cursor-default">
+                                                            <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide font-medium">
+                                                                Blocked
+                                                            </span>
+                                                            <span className="font-medium text-(--muted-2) text-xs leading-tight truncate">
+                                                                {booking.reason || booking.name || 'blocked'}
+                                                            </span>
+                                                        </div>
+                                                    ) : isPending ? (
                                                         <div className="h-full rounded-lg bg-(--pending-bg) text-(--shuttle) px-2.5 py-1.5 flex flex-col items-center justify-center gap-0.5 hover:border-(--shuttle) transition cursor-default">
                                                             <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-(--pending-text) font-medium">
                                                                 Pending
@@ -289,7 +432,7 @@ export default function AdminCourtSchedule() {
                                                         </div>
                                                     )
                                                 ) : (
-                                                    <div className="h-full rounded-lg flex items-center justify-center hover:bg-(--success-bg) transition cursor-default group">
+                                                    <div className="h-full rounded-lg flex items-center justify-center group cursor-pointer">
                                                         <span className="text-(--success-text) text-[11px] opacity-70 group-hover:opacity-100 transition">
                                                             Open
                                                         </span>
@@ -307,5 +450,7 @@ export default function AdminCourtSchedule() {
             </div>
 
         </div>
+
+
     );
 }
