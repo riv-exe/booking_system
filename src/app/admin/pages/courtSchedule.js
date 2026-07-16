@@ -325,7 +325,7 @@ export default function AdminCourtSchedule() {
                                         const handleCellClick = () => {
                                             if (!courtOpen) return;
 
-                                            // Only open modal when the slot is free
+                                            
                                             if (!booking) {
                                                 setBlockInitialData({
                                                     date: bookingDate,
@@ -342,13 +342,13 @@ export default function AdminCourtSchedule() {
                                             e?.stopPropagation?.();
                                             if (!isBlocked || !booking?.booking_id) return;
 
-                                            // Prefer the canonical start/end times coming from the schedule table data.
-                                            // `bookings` items already include `start_time` / `end_time`.
+                                            
+                                            
                                             const bid = booking.booking_id;
                                             const startInt = parseInt(String(booking.start_time).slice(0, 2), 10);
                                             const endInt = parseInt(String(booking.end_time).slice(0, 2), 10);
 
-                                            // Fallback to contiguous scan if start/end are missing for some reason.
+                                            
                                             let startHourLabel;
                                             let endHourLabel;
 

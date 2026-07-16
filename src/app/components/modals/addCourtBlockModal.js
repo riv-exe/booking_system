@@ -10,7 +10,7 @@ function toDateInputValue(date) {
 
 function normalizeHourLabelToInt(hourLabel) {
   if (!hourLabel) return null;
-  // "14:00" => 14
+  
   const h = parseInt(String(hourLabel).slice(0, 2), 10);
   return Number.isFinite(h) ? h : null;
 }
@@ -74,7 +74,7 @@ export default function AddCourtBlockModal({
     const nextReasonPreset = init.reasonPreset || "Maintenance";
     const nextReasonCustom = init.reasonCustom || "";
 
-    // Avoid cascades warning by scheduling after paint
+    
     queueMicrotask(() => {
       setDate(nextDate);
       setCourtId(nextCourtId);

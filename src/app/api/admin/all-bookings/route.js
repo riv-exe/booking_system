@@ -42,7 +42,7 @@ export async function GET(req) {
                 ? `WHERE ${conditions.join(" AND ")}`
                 : "";
 
-        // Count total filtered bookings
+        
         const totalBookings = await query(
             `
             SELECT COUNT(*) AS total
@@ -54,7 +54,7 @@ export async function GET(req) {
             values
         );
 
-        // Create a copy so LIMIT/OFFSET don't affect the count query values
+        
         const bookingValues = [...values];
 
         bookingValues.push(limit);
@@ -63,7 +63,7 @@ export async function GET(req) {
         bookingValues.push(offset);
         const offsetIndex = bookingValues.length;
 
-        // Fetch paginated bookings
+        
         const bookings = await query(
             `
             SELECT

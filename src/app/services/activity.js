@@ -1,4 +1,4 @@
-//get admin info to insert in activity log
+
 export async function getAdminInfo(){
     const res = await fetch(`/api/auth/me`);
     const data = await res.json();
@@ -6,7 +6,7 @@ export async function getAdminInfo(){
     return data.user;
 };
 
-//add activity log
+
 export async function addActivity(adminInfo, activityMessage){
     const activityData = {
         userId: adminInfo,

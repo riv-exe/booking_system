@@ -36,7 +36,7 @@ export async function getSalesData(filter) {
                 `;
                 break;
 
-            default: // this_month
+            default: 
                 dateCondition = `
                     bookings.created_at >= date_trunc('month', CURRENT_DATE)
                     AND bookings.created_at < date_trunc('month', CURRENT_DATE) + interval '1 month'

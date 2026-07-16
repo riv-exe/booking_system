@@ -6,7 +6,7 @@ import { jwtVerify } from "jose";
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 function authUserOrNull() {
-  // Not async: helper used after token extraction.
+  
   return null;
 }
 
@@ -37,8 +37,8 @@ export async function GET(req) {
     const conditions = [];
     const values = [userId];
 
-    // user -> bookers -> bookings
-    // We filter by bookers.user_id = payload.id
+    
+    
     conditions.push(`bo.user_id = $1`);
 
     if (statusFilter && statusFilter !== "all") {

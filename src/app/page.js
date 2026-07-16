@@ -1,4 +1,4 @@
-// app/page.js
+
 import Navbar from "./components/layout/navbar";
 import FeatCourts from "./components/section/featCourts";
 import TrackStatus from "./components/layout/trackStatus";

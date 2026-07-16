@@ -83,7 +83,7 @@ export async function POST(req) {
                 [booker_id, court_id, booking_date, start_time, end_time, reference_code, revenue, payment_proof_url]
             );
             
-            //add activity log
+            
             const activityMessage = `New pending booking ${reference_code}.`;
             await query(`INSERT INTO activity_logs(activity, user_id) VALUES($1, $2)`, [activityMessage, user_id]);
 
@@ -104,7 +104,7 @@ export async function POST(req) {
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
+
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url);

@@ -25,7 +25,7 @@ export default function DeleteCourtBlockModal({
 
     const init = initialData || {};
 
-    // Avoid cascading renders by deferring state updates to next microtask
+    
     queueMicrotask(() => {
       setDate(init.date || "");
       setCourtName(init.courtName || "");

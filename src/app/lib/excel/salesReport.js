@@ -18,7 +18,7 @@ export async function generateSalesExcel(data) {
 
     const worksheet = workbook.addWorksheet("Sales Report");
 
-    // COLUMN WIDTHS
+    
 
     worksheet.columns = [
         { width: 24 },
@@ -29,7 +29,7 @@ export async function generateSalesExcel(data) {
         { width: 18 }
     ];
 
-    // TITLE
+    
 
     worksheet.mergeCells("A1:F1");
 
@@ -87,7 +87,7 @@ export async function generateSalesExcel(data) {
 
     worksheet.addRow([]);
     
-    // SUMMARY
+    
 
     const summaryTitle = worksheet.addRow(["SUMMARY"]);
 
@@ -121,7 +121,7 @@ export async function generateSalesExcel(data) {
 
     worksheet.addRow([]);
 
-    // REVENUE BY COURT
+    
 
     const revenueTitle =
         worksheet.addRow(["REVENUE BY COURT"]);
@@ -152,7 +152,7 @@ export async function generateSalesExcel(data) {
 
     worksheet.addRow([]);
 
-    // PEAK HOURS
+    
 
     const peakTitle = worksheet.addRow(["PEAK HOURS"]);
 
@@ -189,7 +189,7 @@ export async function generateSalesExcel(data) {
 
     worksheet.addRow([]);
 
-    // RECENT TRANSACTIONS
+    
     
     const transactionTitle = worksheet.addRow([
             "RECENT TRANSACTIONS"

@@ -208,9 +208,9 @@ export async function generateSalesReport(data) {
     y -= 5;
     }
     drawHeader();
-    // ======================================================
-// SUMMARY
-// ======================================================
+    
+
+
 
 y -= 10;
 write("SUMMARY", 14, true);
@@ -244,9 +244,9 @@ pair(
 y -= 20;
 
 
-// ======================================================
-// REVENUE BY COURT
-// ======================================================
+
+
+
 
 write("REVENUE BY COURT",14,true);
 y -= 1;
@@ -301,9 +301,9 @@ courtRevenue.forEach(function(court){
 });
 
 y -= 20;
-// ======================================================
-// PEAK HOURS
-// ======================================================
+
+
+
 
 write("PEAK HOURS", 14, true);
 
@@ -316,7 +316,7 @@ const pmHours = peakHours.filter(function (hour) {
     return Number(hour.hour_slot.substring(0, 2)) >= 12;
 });
 
-// Column Headers
+
 page.drawText("AM", {
     x: 120,
     y,
@@ -340,7 +340,7 @@ const startY = y;
 let leftY = startY;
 let rightY = startY;
 
-// ---------- AM ----------
+
 amHours.forEach(function (hour) {
 
     page.drawText(
@@ -374,7 +374,7 @@ amHours.forEach(function (hour) {
 
 });
 
-// ---------- PM ----------
+
 pmHours.forEach(function (hour) {
 
     page.drawText(
@@ -408,18 +408,18 @@ pmHours.forEach(function (hour) {
 
 });
 
-// Continue after whichever column is longer
+
 y = Math.min(leftY, rightY);
 
 y -= 25;
-// ======================================================
-// RECENT TRANSACTIONS
-// ======================================================
+
+
+
 
 write("RECENT TRANSACTIONS", 14, true);
 y -= 10;
 
-// ---------- Table Header ----------
+
 
 const headerY = y;
 
@@ -471,13 +471,13 @@ page.drawText("Amount", {
 y -= 18;
 
 
-// ---------- Rows ----------
+
 
 recentTransactions.forEach(function(transaction, index){
 
     checkPage(45);
 
-    // redraw table header after page break
+    
     if(y > pageHeight - 100){
 
         page.drawRectangle({
@@ -527,7 +527,7 @@ recentTransactions.forEach(function(transaction, index){
 
     }
 
-    // Zebra stripes
+    
 
     if(index % 2 !== 0){
 
@@ -548,7 +548,7 @@ recentTransactions.forEach(function(transaction, index){
     }
 
 
-    // Date
+    
 
     page.drawText(
 
@@ -576,7 +576,7 @@ recentTransactions.forEach(function(transaction, index){
     );
 
 
-    // Reference
+    
 
     page.drawText(
 
@@ -597,7 +597,7 @@ recentTransactions.forEach(function(transaction, index){
     );
 
 
-    // Customer
+    
 
     page.drawText(
 
@@ -618,7 +618,7 @@ recentTransactions.forEach(function(transaction, index){
     );
 
 
-    // Court
+    
 
     page.drawText(
 
@@ -639,7 +639,7 @@ recentTransactions.forEach(function(transaction, index){
     );
 
 
-    // Amount
+    
 
     page.drawText(
 
@@ -664,9 +664,9 @@ recentTransactions.forEach(function(transaction, index){
 });
 
 y -= 25;
-// ======================================================
-// FOOTER
-// ======================================================
+
+
+
 
 pages.forEach(function(currentPage, index){
 
