@@ -88,25 +88,25 @@ export async function POST(req) {
 
     
     
-    if (!finalBookerId) {
-      const anyBooker = await query(`SELECT id FROM bookers ORDER BY id ASC LIMIT 1`);
-      if (anyBooker.rows.length === 0) {
-        return NextResponse.json(
-          { error: "Cannot create block: bookers table is empty and booker_id was not provided" },
-          { status: 400 }
-        );
-      }
-      finalBookerId = anyBooker.rows[0].id;
-    }
+    // if (!finalBookerId) {
+    //   const anyBooker = await query(`SELECT id FROM bookers ORDER BY id ASC LIMIT 1`);
+    //   if (anyBooker.rows.length === 0) {
+    //     return NextResponse.json(
+    //       { error: "Cannot create block: bookers table is empty and booker_id was not provided" },
+    //       { status: 400 }
+    //     );
+    //   }
+    //   finalBookerId = anyBooker.rows[0].id;
+    // }
 
     
-    const bookerCheck = await query(`SELECT id FROM bookers WHERE id = $1`, [finalBookerId]);
-    if (bookerCheck.rows.length === 0) {
-      return NextResponse.json(
-        { error: "Invalid booker_id: not found in bookers" },
-        { status: 400 }
-      );
-    }
+    // const bookerCheck = await query(`SELECT id FROM bookers WHERE id = $1`, [finalBookerId]);
+    // if (bookerCheck.rows.length === 0) {
+    //   return NextResponse.json(
+    //     { error: "Invalid booker_id: not found in bookers" },
+    //     { status: 400 }
+    //   );
+    // }
 
 
     const result = await query(
