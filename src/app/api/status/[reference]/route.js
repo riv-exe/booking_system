@@ -1,8 +1,31 @@
 import { query } from "@/app/lib/db";
 import { NextResponse } from "next/server";
+import {rateLimit} from "@/app/lib/rateLimit";
 
 export async function GET(req, { params }) {
-     
+     const limited = rateLimit({
+          req,
+          name: "api:status",
+          limit: 20,
+          windowMs: 10 * 60 * 1000, // 10 minutes
+      });
+
+      if (!limited.allowed) {
+          return Response.json(
+              {
+                  error: "Too many attempts. Please try again later.",
+              },
+              {
+                  status: 429,
+                  headers: {
+                      "Retry-After": Math.ceil(
+                          (limited.resetAt - Date.now()) / 1000
+                      ).toString(),
+                  },
+              }
+          );
+      }
+
     try {
         const { reference } = await params;
 
@@ -12,7 +35,7 @@ export async function GET(req, { params }) {
 
         if (!booking) {
             return NextResponse.json(
-                { message: "Booking not found" },
+                { message: "Booking not found." },
                 { status: 404 }
             );
         }
@@ -28,7 +51,6 @@ export async function GET(req, { params }) {
             remark: booking.remark,
         });
     } catch (error) {
-        console.error(error);
 
         return NextResponse.json(
             { message: "Internal server error" },

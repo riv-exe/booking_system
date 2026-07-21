@@ -66,7 +66,7 @@ export default function BookingDetails({
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result?.message || "Booking failed");
+        alert(result?.error || "Booking failed");
         return;
       }
 

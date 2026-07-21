@@ -43,7 +43,9 @@ export default function AdminBookingModal({
 
               <div>
                 <p className="text-xs text-gray-400">Customer</p>
-                <p className="font-semibold text-sm">{booking.booker_name}</p>
+                <p className="font-semibold text-sm uppercase">{booking.booker_name}</p>
+                <p className="text-sm">{booking.email}</p>
+                <p className="text-sm">{booking.contact_no}</p>
               </div>
 
               <div>

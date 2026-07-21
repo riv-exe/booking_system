@@ -2,7 +2,7 @@ import { query } from "@/app/lib/db";
 import { NextResponse } from "next/server";
 import cloudinary from "@/app/lib/cloudinary";
 
-export async function PUT(req, { params }) {
+export async function PATCH(req, { params }) {
     try {
         const { id } = await params;
 

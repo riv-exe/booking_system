@@ -88,7 +88,7 @@ export default function EditCourtModal({
         }
 
         const res = await fetch(`/api/admin/court-management/${court.id}`, {
-            method: "PUT",
+            method: "PATCH",
             body: formData,
         });
 
@@ -106,10 +106,10 @@ export default function EditCourtModal({
         const adminInfo = await getAdminInfo();
         const activityMessage = `Court (${name}) has been edited.`;
 
+        editCourt();
         if(adminInfo){
             addActivity(adminInfo.id, activityMessage);
         }
-        editCourt();
     }
 
     function handleClose() {

@@ -2,12 +2,59 @@ import { query } from "@/app/lib/db";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
+import {rateLimit} from "@/app/lib/rateLimit";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function POST(req) {
+
+   const limited = rateLimit({
+          req,
+          name: "api:signup",
+          limit: 20,
+          windowMs: 30 * 60 * 1000, // 30 minutes
+      });
+
+      if (!limited.allowed) {
+          return Response.json(
+              {
+                  error: "Too many signup attempts. Please try again later.",
+              },
+              {
+                  status: 429,
+                  headers: {
+                      "Retry-After": Math.ceil(
+                          (limited.resetAt - Date.now()) / 1000
+                      ).toString(),
+                  },
+              }
+          );
+      }
+      
   try {
     const { name, email, password, contactNum } = await req.json();
+
+
+    if (!name || !email || !password || !contactNum) {
+      return Response.json(
+          {
+              message: "All fields are required.",
+          },
+          {
+              status: 400,
+          }
+      );
+  }
+
+  const existing = await query( "SELECT id FROM users WHERE email = $1", [email] ); 
+  
+  if (existing.rows.length > 0) { 
+    return Response.json( { 
+      message: "Email is already registered.", 
+    }, { 
+      status: 409, 
+    } ); 
+  }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -51,11 +98,13 @@ export async function POST(req) {
         contact_num: user.contact_num,
         role: user.role
       },
+    },{
+      status: 201
     });
 
   } catch (err) {
     return Response.json(
-      { message: "Signup failed", error: err.message },
+      { message: "Signup failed" },
       { status: 500 }
     );
   }

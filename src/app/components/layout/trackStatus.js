@@ -22,7 +22,7 @@ export default function TrackStatus() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Booking not found");
+        setError(data.error || "Booking not found.");
         setStatus("");
         return;
       }
@@ -159,7 +159,7 @@ export default function TrackStatus() {
               </div>
             )}
 
-            {error && <p className="font-mono text-base">{error}</p>}
+            {error && <p className="font-mono text-base text-center">{error}</p>}
           </div>
         )}
       </div>

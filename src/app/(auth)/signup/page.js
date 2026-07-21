@@ -34,7 +34,7 @@ export default function SignUpPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Signup failed");
+        setError(data.error || "Signup failed");
         return;
       }
 
@@ -61,7 +61,7 @@ export default function SignUpPage() {
         </h1>
 
         {error && (
-          <p className="text-red-500 text-sm mb-3">{error}</p>
+          <p className="text-red-500 text-sm mb-3 text-center">{error}</p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">

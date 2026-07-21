@@ -1,5 +1,6 @@
 import { query } from "@/app/lib/db";
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/app/lib/rateLimit";
 
 function generateRef() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -14,6 +15,32 @@ function generateRef() {
 }
 
 export async function POST(req) {
+    const body = await req.json();
+
+    const limited = rateLimit({
+        req,
+        name: "api:book:post",
+        key: body.user_id ? `user:${body.user_id}` : null,
+        limit: 15,
+        windowMs: 5 * 60 * 1000, //5 minutes
+    });
+
+    if (!limited.allowed) {
+        return NextResponse.json(
+            {
+                error: "Too many booking requests. Please try again later.",
+            },
+            {
+                status: 429,
+                headers: {
+                    "Retry-After": Math.ceil(
+                        (limited.resetAt - Date.now()) / 1000
+                    ).toString(),
+                },
+            }
+        );
+    }
+
     let {
         user_id,
         court_id,
@@ -24,8 +51,8 @@ export async function POST(req) {
         email,
         revenue,
         contactNum,
-        payment_proof_url
-    } = await req.json();
+        payment_proof_url,
+    } = body;
 
     let booker_id;
     if (!court_id || !booking_date || !start_time || !end_time) {
